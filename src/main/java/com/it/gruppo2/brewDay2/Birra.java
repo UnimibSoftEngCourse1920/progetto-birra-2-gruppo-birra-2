@@ -3,7 +3,8 @@ package com.it.gruppo2.brewDay2;
 public class Birra {
 
 	private String nome;
-	private enum tipo {Bionda, Rossa, Nera, Ipa, PaleAle, DoppioMalto, IndianAle};
+	@SuppressWarnings("unused")
+	private String tipo;
 	
 	public String getNome() {
 		return nome;
