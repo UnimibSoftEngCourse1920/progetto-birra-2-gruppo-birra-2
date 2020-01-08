@@ -1,8 +1,6 @@
 package com.it.gruppo2.operationsDB;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.sql.*;
 
 public class connectionDB {
@@ -75,9 +73,10 @@ public class connectionDB {
 			Class.forName("com.mysql.jdbc.Driver").newInstance(); 
 			connection = DriverManager.getConnection(getDbpathString()+nameDBString, getUsernameString(), getPwdString()); 
 			if (!connection.isClosed()) {
-				System.out.println("Successfully connected to server..."); 
+				System.out.println("Successfully connected to database..."); 
 				createTables createTables= new createTables(); 
-				createTables.setTables(connection); }
+				createTables.setTables(connection); 
+				}
 		} catch (Exception e) {
 			System.err.println("Excpetion: " + e.getMessage());
 		} finally {

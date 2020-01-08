@@ -7,7 +7,7 @@ import java.sql.Statement;
 // creating a DB
 public class createDB { 
 	public String setDB(Connection connection) throws SQLException {
-		String nameDBString = "brewdayDB1";//db to be logic
+		String nameDBString = "brewdayDB";//db to be logic
 		Statement stmt = connection.createStatement();
 		System.out.println("Creating database...");
 		String sql = "CREATE DATABASE " + nameDBString;
