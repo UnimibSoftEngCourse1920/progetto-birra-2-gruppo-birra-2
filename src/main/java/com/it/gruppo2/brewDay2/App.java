@@ -8,6 +8,6 @@ public class App
 {
     public static void main( String[] args )
     {
-        Birra birra = new Birra("Birra minchia", "Rossa");
+        Birra birra = new Birra("Birra minchia", "Rossa"); 
     }
 }
