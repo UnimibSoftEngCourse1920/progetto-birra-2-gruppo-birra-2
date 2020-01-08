@@ -5,6 +5,12 @@ public class Attrezzatura {
 	private String nome;
 	private int capacita;
 	
+	public Attrezzatura(String nome, int capacita) {
+		super();
+		this.nome = nome;
+		this.capacita = capacita;
+	}
+	
 	public String getNome() {
 		return nome;
 	}

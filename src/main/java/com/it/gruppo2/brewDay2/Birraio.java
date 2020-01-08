@@ -8,6 +8,13 @@ public class Birraio {
 	private String nome;
 	private String cognome;
 	
+	public Birraio(String nome, String cognome) {
+		super();
+		this.nome = nome;
+		this.cognome = cognome;
+	}
+
+	//public Birraio();
 
 	public String getNome() {
 		return nome;

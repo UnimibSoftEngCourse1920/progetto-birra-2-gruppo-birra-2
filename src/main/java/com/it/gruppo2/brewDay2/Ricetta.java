@@ -4,6 +4,11 @@ public class Ricetta extends Ingrediente {
 
 	private double quantita;
 
+	public Ricetta(double quantita) {
+		super();
+		this.quantita = quantita;
+	}
+	
 	public double getQuantita() {
 		return quantita;
 	}
@@ -16,6 +21,8 @@ public class Ricetta extends Ingrediente {
 	{
 		this.quantita = quantita;
 	}
+
+
 	
 	
 	
