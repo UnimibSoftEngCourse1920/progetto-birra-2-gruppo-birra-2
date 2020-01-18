@@ -6,13 +6,22 @@ import java.sql.Statement;
 
 // creating a DB
 public class createDB { 
+	private String nameDBString;
+	
+	public String getNameDBString() {
+		return nameDBString;
+	}
+	public void setNameDBString() {
+		this.nameDBString = "brewdaydb";
+	}
+	
 	public String setDB(Connection connection) throws SQLException {
-		String nameDBString = "brewdayDB";//db to be logic
+		setNameDBString();
 		Statement stmt = connection.createStatement();
 		System.out.println("Creating database...");
-		String sql = "CREATE DATABASE " + nameDBString;
+		String sql = "CREATE DATABASE " + getNameDBString();
 		stmt.executeUpdate(sql);
 		System.out.println("Database created successfully..."); 
-		return nameDBString;
+		return getNameDBString();
 	}
 }
