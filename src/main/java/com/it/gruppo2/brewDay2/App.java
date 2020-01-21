@@ -12,7 +12,7 @@ import com.it.gruppo2.operationsDB.connectionDB;
 
 public class App {
 	public static void main(String[] args) throws IOException {
-		//create phase
+		//create phse
 		connectionDB connectionDB = new connectionDB();
 		connectionDB.setDBCredential();
 		connectionDB.createServerConnection();
