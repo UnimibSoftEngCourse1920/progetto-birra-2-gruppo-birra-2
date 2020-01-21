@@ -3,6 +3,7 @@ package com.it.gruppo2.brewDay2;
 public class Birra {
 
 	private String nome;
+
 	private String tipo;
 	
 	public Birra(String nome, String tipo) {

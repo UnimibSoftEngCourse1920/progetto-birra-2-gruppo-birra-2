@@ -5,7 +5,6 @@
   <groupId>com.it.gruppo2</groupId>
   <artifactId>brewDay2</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <packaging>jar</packaging>
 
   <name>brewDay2</name>
   <url>http://maven.apache.org</url>
