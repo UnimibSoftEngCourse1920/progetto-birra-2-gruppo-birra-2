@@ -18,12 +18,6 @@ public class App {
 		connectionDB.createServerConnection();
 		connectionDB.createDBConnection();
 
-		//query phase
-		Connection connection = connectionDB.connectionToDB();
-		
-		
-		
-		connectionDB.closingConnection(connection);
 	}
 	
 	

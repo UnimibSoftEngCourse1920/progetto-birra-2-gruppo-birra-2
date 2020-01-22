@@ -45,7 +45,7 @@ public class connectionDB {
 	public void setDBCredential() throws IOException {
 
 //		Mock to deleted and uncommented previous lines
-		setDbpathString("jdbc:mysql://localhost:3306/");//delete autobrewday
+		setDbpathString("jdbc:mysql://localhost:3307/");//delete autobrewday
 		setUsernameString("root");
 		setPwdString("");
 	}
