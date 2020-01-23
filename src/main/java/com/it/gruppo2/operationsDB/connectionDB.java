@@ -4,20 +4,20 @@ import java.io.IOException;
 import java.sql.*;
 
 public class connectionDB {
-	public static String dbpathString;
-	public static String usernameString;
-	public static String pwdString;
-	public static String nameDBString;
+	public String dbpathString;
+	public String usernameString;
+	public String pwdString;
+	public String nameDBString;
 	
-	public static String getNameDBString() {
+	public String getNameDBString() {
 		return nameDBString;
 	}
 
-	public static void setNameDBString(String thisNameDBString) {
+	public void setNameDBString(String thisNameDBString) {
 		nameDBString = thisNameDBString;
 	}
 
-	public static String getPwdString() {
+	public  String getPwdString() {
 		return pwdString;
 	}
 
@@ -25,7 +25,7 @@ public class connectionDB {
 		this.pwdString = pwdString;
 	}
 
-	public static String getUsernameString() {
+	public  String getUsernameString() {
 		return usernameString;
 	}
 
@@ -33,7 +33,7 @@ public class connectionDB {
 		this.usernameString = usernameString;
 	}
 
-	public static String getDbpathString() {
+	public  String getDbpathString() {
 		return dbpathString;
 	}
 
@@ -68,7 +68,7 @@ public class connectionDB {
 		}
 	}
 	
-	public static void closingConnection(Connection con) {
+	public  void closingConnection(Connection con) {
 		try {
 			con.close();
 			if(con.isClosed())
@@ -99,7 +99,7 @@ public class connectionDB {
 		}
 	}
 	
-	public static Connection connectionToDB() {
+	public  Connection connectionToDB() {
 		Connection connection = null;
 		if(getNameDBString() == null)
 			setNameDBString("brewdaydb");

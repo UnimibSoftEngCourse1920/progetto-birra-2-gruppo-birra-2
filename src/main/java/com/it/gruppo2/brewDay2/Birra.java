@@ -4,12 +4,9 @@ public class Birra {
 
 	private String nome;
 
-	private String tipo;
-	
 	public Birra(String nome, String tipo) {
 		super();
 		this.nome = nome;
-		this.tipo = tipo;
 	}
 	public String getNome() {
 		return nome;
