@@ -17,7 +17,7 @@ import javax.swing.JPasswordField;
 
 import com.it.gruppo2.operationsDB.connectionDB;
 
-public class BrewDayGUI {
+public class Login {
 
 	private JFrame frame;
 	private JPasswordField passwordField;
@@ -33,7 +33,7 @@ public class BrewDayGUI {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					BrewDayGUI window = new BrewDayGUI();
+					Login window = new Login();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -47,7 +47,7 @@ public class BrewDayGUI {
 	/**
 	 * Create the application.
 	 */
-	public BrewDayGUI() {
+	public Login() {
 		initialize();
 	}
 
