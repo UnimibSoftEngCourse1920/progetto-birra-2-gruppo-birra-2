@@ -22,6 +22,7 @@ import javax.swing.JTextPane;
 
 public class SignUp {
 
+	
 	private JFrame frame;
 	private JPasswordField fieldPass;
 	private JPasswordField fieldConfPass;

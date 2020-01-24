@@ -119,7 +119,7 @@ public class Login {
 		registerButton = new JButton("Sign up");
 		registerButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "Prova");
+				SignUp s = new SignUp();
 			}
 		});
 		registerButton.setBounds(171, 206, 100, 25);
