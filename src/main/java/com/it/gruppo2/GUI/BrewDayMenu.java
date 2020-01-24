@@ -57,7 +57,7 @@ public class BrewDayMenu {
 		Statement stmt;
 		stmt = connection.createStatement();
 		
-		//crazione oggetti birra basati sul database
+		//crazione oggetti birra bsati sul database
 		String sql = "SELECT id_birra FROM birra WHERE id_birraio = '" + birraio.getId_birraio()+ "'";
 		ResultSet rs = stmt.executeQuery(sql);
 		
