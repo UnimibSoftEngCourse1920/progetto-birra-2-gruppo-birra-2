@@ -12,13 +12,7 @@ import com.it.gruppo2.brewDay2.*;
 import java.awt.event.ActionListener;
 import java.sql.*;
 import java.awt.event.ActionEvent;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import javax.swing.JTextPane;
 import javax.swing.JList;
-import javax.swing.AbstractListModel;
 import javax.swing.DefaultListModel;
 
 public class BrewDayMenu {
@@ -79,7 +73,7 @@ public class BrewDayMenu {
 		}
 		rs.close();
 		
-		DefaultListModel demoList = new DefaultListModel();
+		DefaultListModel<String> demoList = new DefaultListModel<String>();
 		 
 			
 		sql = "SELECT * FROM birra WHERE id_birraio = '" + brewerBirraio.getId_birraio()+ "'";
@@ -91,7 +85,7 @@ public class BrewDayMenu {
 				System.out.println(birra[i].getNome());
 				demoList.addElement(birra[i].getNome());
 			}
-			JList listd = new JList(demoList);
+			JList<String> listd = new JList<String>(demoList);
 			 listd.setBounds(64, 32, 200, 200);
 				frame.getContentPane().add(listd);
 		}
