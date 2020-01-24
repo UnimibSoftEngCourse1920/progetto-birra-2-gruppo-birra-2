@@ -68,6 +68,7 @@ public class BrewDayMenu {
 		
 		for(int i=0; rs.next(); i++) {
 			birra[i]=new Birra(rs.getInt("id_birra"), rs.getString("nome"), rs.getString("tipo"), rs.getInt("id_birraio"));
+			System.out.println(birra[i].getNome());
 		}
 		
 		/*sql = "SELECT id_birra FROM ricetta WHERE id_birra = '" + birra.getId_birra()+ "'";
