@@ -12,6 +12,6 @@ public class createTables {
 		String sql = "CREATE TABLE birra " + "(id INTEGER not NULL, " + " first VARCHAR(255), " + " last VARCHAR(255), "
 				+ " age INTEGER, " + " PRIMARY KEY ( id ))";
 		stmt.executeUpdate(sql);
-		System.out.println("Created table in given database..");
+		System.out.println("Created table in given database...");
 	}
 }
