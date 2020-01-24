@@ -12,6 +12,14 @@ import com.it.gruppo2.brewDay2.*;
 import java.awt.event.ActionListener;
 import java.sql.*;
 import java.awt.event.ActionEvent;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+import javax.swing.JTextField;
+import javax.swing.JTextArea;
+import javax.swing.JTextPane;
+import javax.swing.JList;
+import javax.swing.AbstractListModel;
+import javax.swing.DefaultListModel;
 
 public class BrewDayMenu {
 
@@ -54,23 +62,40 @@ public class BrewDayMenu {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
+		
 		Statement stmt;
 		stmt = connection.createStatement();
 		
 		//crazione oggetti birra bsati sul database
-		String sql = "SELECT * FROM birra WHERE id_birraio = '" + brewerBirraio.getId_birraio()+ "'";
+		
+		String sql = "SELECT COUNT(id_birra) AS numBirre FROM birra WHERE id_birraio = '" + brewerBirraio.getId_birraio() + "'";
 		ResultSet rs = stmt.executeQuery(sql);
-		
-		sql = "SELECT (COUNT id_birra) AS numBirre FROM birra WHERE id_birraio = '" + brewerBirraio.getId_birraio()+ "'";
-		ResultSet rs1 = stmt.executeQuery(sql);
-		rs1.next();
-		Birra[] birra = new Birra[rs1.getInt("numBirre")];
-		
-		for(int i=0; rs.next(); i++) {
-			birra[i]=new Birra(rs.getInt("id_birra"), rs.getString("nome"), rs.getString("tipo"), rs.getInt("id_birraio"));
-			System.out.println(birra[i].getNome());
+		Birra[] birra = null;
+		int max=0;
+		if(rs.next()) {
+			max=rs.getInt("numBirre");
+			birra = new Birra[max];	
+			
 		}
+		rs.close();
 		
+		DefaultListModel demoList = new DefaultListModel();
+		 
+			
+		sql = "SELECT * FROM birra WHERE id_birraio = '" + brewerBirraio.getId_birraio()+ "'";
+		rs = stmt.executeQuery(sql);
+		if(rs.next())
+		{
+			for(int i=0; i<max; i++, rs.next()) {
+				birra[i]=new Birra(rs.getInt("id_birra"), rs.getString("nome"), rs.getString("tipo"), rs.getInt("id_birraio"));
+				System.out.println(birra[i].getNome());
+				demoList.addElement(birra[i].getNome());
+			}
+			JList listd = new JList(demoList);
+			 listd.setBounds(64, 32, 200, 200);
+				frame.getContentPane().add(listd);
+		}
+		rs.close();
 		/*sql = "SELECT id_birra FROM ricetta WHERE id_birra = '" + birra.getId_birra()+ "'";
 		rs = stmt.executeQuery(sql);
 		

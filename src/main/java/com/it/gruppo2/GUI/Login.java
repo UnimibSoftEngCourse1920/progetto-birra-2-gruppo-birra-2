@@ -87,7 +87,7 @@ public class Login {
 				try {
 					stmt = connection.createStatement();
 					System.out.println("Checking existing brewer...");
-					String sql = "SELECT id_birraio FROM birraio WHERE username = " + userField.getText() + " AND password = " + passwordField.getText();
+					String sql = "SELECT * FROM birraio WHERE username = '" + userField.getText() + "' AND password = '" + passwordField.getText() +"'";
 					ResultSet rs = stmt.executeQuery(sql);
 					if(rs.next()) {
 						Birraio brewerBirraio = new Birraio(rs.getInt("id_birraio"), rs.getString("nome"), rs.getString("cognome"), rs.getString("username"), rs.getString("password"));
