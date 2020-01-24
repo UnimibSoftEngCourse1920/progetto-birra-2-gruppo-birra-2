@@ -29,17 +29,18 @@ public class Login {
 	/**l
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
+	public int invokeGUI(final Connection connection) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Login window = new Login();
+					Login window = new Login(connection);
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
+		return 0;
 	}
 	
 	
@@ -47,14 +48,14 @@ public class Login {
 	/**
 	 * Create the application.
 	 */
-	public Login() {
-		initialize();
+	public Login(Connection connection) {
+		initialize(connection);
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize() {
+	private void initialize(final Connection connection) {
 		frame =  new JFrame();
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -90,28 +91,8 @@ public class Login {
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent loginButton) {
 				
-				JOptionPane.showMessageDialog(frame, "Ok boomer");
-				//Inizio connessione
-				Connection connection = connectionDB.connectionToDB();
-				
-				Statement stmt;
-				try {
-					stmt = connection.createStatement();
-					String sql = "select id_birraio from birraio where user is " + userField.getText() + " and password is " + passwordField.getPassword();
-					stmt.executeUpdate(sql); 
-					
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					System.out.println("Errore nella connessione");
-				}
-				
-				
-				
-				//Fine connessione
-				connectionDB.closingConnection(connection);
 			}
 		});
-		 
 		loginButton.setBounds(171, 131, 100, 25);
 		frame.getContentPane().add(loginButton);
 		

@@ -5,7 +5,7 @@ import java.sql.Connection;
 
 import com.it.gruppo2.operationsDB.*;
 
-import com.it.gruppo2.brewDay2GUI.brewDay2GUI;
+import com.it.gruppo2.GUI.*;
 
 /**
  * BrewDayApp
@@ -18,12 +18,9 @@ public class App {
 		connectionDB connectionDB = new connectionDB();
 		connectionDB.setDBCredential();
 		connectionDB.createServerConnection();
-		connectionDB.createDBConnection();
-
-		//query phase
-		Connection connection = connectionDB.connectionToDB();
-		
-		brewDay2GUI grapInterf = new brewDay2GUI();
+		Connection connection = connectionDB.createDBConnection();
+		//GUI starts
+		Login grapInterf = new Login(connection);
 		grapInterf.invokeGUI(connection);
 	}
 	
