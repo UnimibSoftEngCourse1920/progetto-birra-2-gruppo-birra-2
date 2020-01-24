@@ -92,6 +92,6 @@ public class createTables {
 				"  ADD CONSTRAINT `idfk_id_birra` FOREIGN KEY (`id_birra`) REFERENCES `birra` (`id_birra`),\r\n" + 
 				"  ADD CONSTRAINT `idfk_id_ingrediente` FOREIGN KEY (`id_ingrediente`) REFERENCES `ingrediente` (`id_ingrediente`);";
 		stmt.executeUpdate(sql);
-		System.out.println("Created table in given database...");
+		System.out.println("Created table in given database..");
 	}
 }
