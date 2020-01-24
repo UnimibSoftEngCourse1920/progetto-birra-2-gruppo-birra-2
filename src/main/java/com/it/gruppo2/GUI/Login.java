@@ -1,26 +1,23 @@
 package com.it.gruppo2.GUI;
 
-import java.awt.EventQueue;
+import java.awt.EventQueue;  
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import java.sql.Statement;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
-
-import com.it.gruppo2.operationsDB.connectionDB;
 
 public class Login {
 
 	private JFrame frame;
-	private JPasswordField passwordField;
 	private JButton registerButton;
 	private JButton loginButton;
 	private JLabel lblNewLabel;
@@ -58,7 +55,7 @@ public class Login {
 	private void initialize(final Connection connection) {
 		frame =  new JFrame();
 		frame.setBounds(100, 100, 450, 300);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		//Label per inserimento user
@@ -77,20 +74,29 @@ public class Login {
 		lblNewLabel_1.setBounds(127, 105, 46, 14);
 		frame.getContentPane().add(lblNewLabel_1);
 		
-		
-		
-		
-		//Password Field
-		passwordField = new JPasswordField();
-		passwordField.setToolTipText("Inserisci password");
-		passwordField.setBounds(183, 100, 100, 25);
+		final JFormattedTextField passwordField = new JFormattedTextField();
+		passwordField.setBounds(183, 99, 100, 26);
 		frame.getContentPane().add(passwordField);
 		
 		//Button per il login
 		loginButton = new JButton("Login");
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent loginButton) {
-				
+				Statement stmt;
+				try {
+					stmt = connection.createStatement();
+					System.out.println("Checking existing brewer...");
+					String sql = "SELECT * FROM birraio WHERE username = " + userField.getText() + " AND password = " + passwordField.getText();
+					ResultSet rs = stmt.executeQuery(sql);
+					if(rs.next()) {
+						JDialog d = new JDialog(frame, "Hello "+ rs.getString("nome"), true);
+					    d.setLocationRelativeTo(frame);
+					    d.setVisible(true);
+					}
+					rs.close();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
 			}
 		});
 		loginButton.setBounds(171, 131, 100, 25);
@@ -100,7 +106,9 @@ public class Login {
 		registerButton = new JButton("Sign up");
 		registerButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				SignUp s = new SignUp();
+				SignUp grapInterf = new SignUp(connection);
+				grapInterf.invokeGUI(connection);
+				frame.dispose();
 			}
 		});
 		registerButton.setBounds(171, 206, 100, 25);

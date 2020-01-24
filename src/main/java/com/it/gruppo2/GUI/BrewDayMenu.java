@@ -2,18 +2,17 @@ package com.it.gruppo2.GUI;
 
 import java.awt.EventQueue;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.awt.event.ActionEvent;
-import javax.swing.JLabel;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.JDesktopPane;
 
 public class BrewDayMenu {
 
@@ -22,7 +21,7 @@ public class BrewDayMenu {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
+	public void invokeGUI(Connection connection, int id_birraio) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -63,7 +62,21 @@ public class BrewDayMenu {
 		JMenuItem mntmCaricaRicetta = new JMenuItem("Carica ricetta");
 		mntmCaricaRicetta.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-			
+				Statement stmt;
+				try {
+					stmt = connection.createStatement();
+					System.out.println("Checking existing brewer...");
+					String sql = "SELECT * FROM birraio WHERE username = " + userField.getText() + " AND password = " + passwordField.getText();
+					ResultSet rs = stmt.executeQuery(sql);
+					if(rs.next()) {
+						JDialog d = new JDialog(frame, "Hello "+ rs.getString("nome"), true);
+					    d.setLocationRelativeTo(frame);
+					    d.setVisible(true);
+					}
+					rs.close();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
 			}
 		});
 		mnRicetta.add(mntmCaricaRicetta);
