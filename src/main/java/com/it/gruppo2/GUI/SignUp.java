@@ -1,6 +1,7 @@
 package com.it.gruppo2.GUI;
 
-import java.awt.EventQueue;  
+import com.it.gruppo2.brewDay2.*;
+import java.awt.EventQueue;   
 
 import javax.swing.JFrame;
 import javax.swing.JFormattedTextField;
@@ -136,8 +137,10 @@ public class SignUp {
 								stmt.executeUpdate(sql);
 								sql = "SELECT id_birraio FROM birraio WHERE username = '" + username+ "'";
 								rs = stmt.executeQuery(sql);
-								BrewDayMenu grapInterf = new BrewDayMenu(connection);
-								grapInterf.invokeGUI(connection, rs.getInt("id_birraio"));
+								rs.next();
+								Birraio brewerBirraio = new Birraio(rs.getInt("id_birraio"), nome, cognome, username, password);
+								BrewDayMenu grapInterf = new BrewDayMenu(connection, brewerBirraio);
+								grapInterf.invokeGUI(connection, brewerBirraio);
 								frame.dispose();
 							}
 							rs.close();

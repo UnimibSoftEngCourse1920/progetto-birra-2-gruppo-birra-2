@@ -1,6 +1,6 @@
 package com.it.gruppo2.GUI;
 
-import java.awt.EventQueue;  
+import java.awt.EventQueue;   
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -10,10 +10,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+
+import com.it.gruppo2.brewDay2.Birraio;
 
 public class Login {
 
@@ -86,12 +87,13 @@ public class Login {
 				try {
 					stmt = connection.createStatement();
 					System.out.println("Checking existing brewer...");
-					String sql = "SELECT * FROM birraio WHERE username = " + userField.getText() + " AND password = " + passwordField.getText();
+					String sql = "SELECT id_birraio FROM birraio WHERE username = " + userField.getText() + " AND password = " + passwordField.getText();
 					ResultSet rs = stmt.executeQuery(sql);
 					if(rs.next()) {
-						JDialog d = new JDialog(frame, "Hello "+ rs.getString("nome"), true);
-					    d.setLocationRelativeTo(frame);
-					    d.setVisible(true);
+						Birraio brewerBirraio = new Birraio(rs.getInt("id_birraio"), rs.getString("nome"), rs.getString("cognome"), rs.getString("username"), rs.getString("password"));
+						BrewDayMenu grapInterf = new BrewDayMenu(connection, brewerBirraio);
+						grapInterf.invokeGUI(connection, brewerBirraio);
+						frame.dispose();
 					}
 					rs.close();
 				} catch (SQLException e1) {

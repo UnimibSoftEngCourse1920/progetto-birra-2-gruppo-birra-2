@@ -2,20 +2,15 @@ package com.it.gruppo2.GUI;
 
 import java.awt.EventQueue;
 
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-import com.it.gruppo2.operationsDB.*;
 import com.it.gruppo2.brewDay2.*;
 
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.awt.event.ActionEvent;
 
 public class BrewDayMenu {
@@ -25,11 +20,11 @@ public class BrewDayMenu {
 	/**
 	 * Launch the application.
 	 */
-	public void invokeGUI(Connection connection, int id_birraio) {
+	public void invokeGUI(final Connection connection, final Birraio brewerBirraio) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					BrewDayMenu window = new BrewDayMenu(connection, birraio);
+					BrewDayMenu window = new BrewDayMenu(connection, brewerBirraio);
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -41,14 +36,19 @@ public class BrewDayMenu {
 	/**
 	 * Create the application.
 	 */
-	public BrewDayMenu(Connection connection, Birraio birraio) {
-		initialize( connection,  birraio);
+	public BrewDayMenu(Connection connection, Birraio brewerBirraio) {
+		try {
+			initialize(connection, brewerBirraio);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
 	 * Initialize the contents of the frame.
+	 * @throws SQLException 
 	 */
-	private void initialize(Connection connection, Birraio birraio) {
+	private void initialize(final Connection connection, Birraio brewerBirraio) throws SQLException {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 820, 457);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -58,16 +58,16 @@ public class BrewDayMenu {
 		stmt = connection.createStatement();
 		
 		//crazione oggetti birra bsati sul database
-		String sql = "SELECT id_birra FROM birra WHERE id_birraio = '" + birraio.getId_birraio()+ "'";
+		String sql = "SELECT * FROM birra WHERE id_birraio = '" + brewerBirraio.getId_birraio()+ "'";
 		ResultSet rs = stmt.executeQuery(sql);
 		
-		sql = "SELECT (COUNT id_birra) AS numBirre FROM birra WHERE id_birraio = '" + birraio.getId_birraio()+ "'";
+		sql = "SELECT (COUNT id_birra) AS numBirre FROM birra WHERE id_birraio = '" + brewerBirraio.getId_birraio()+ "'";
 		ResultSet rs1 = stmt.executeQuery(sql);
 		rs1.next();
 		Birra[] birra = new Birra[rs1.getInt("numBirre")];
 		
 		for(int i=0; rs.next(); i++) {
-			birra[i]=new Birra(rs.getInt("id_birra"), rs.getString("nome"), rs.getString("tipo"));
+			birra[i]=new Birra(rs.getInt("id_birra"), rs.getString("nome"), rs.getString("tipo"), rs.getInt("id_birraio"));
 		}
 		
 		/*sql = "SELECT id_birra FROM ricetta WHERE id_birra = '" + birra.getId_birra()+ "'";
@@ -96,21 +96,7 @@ public class BrewDayMenu {
 		JMenuItem mntmCaricaRicetta = new JMenuItem("Carica ricetta");
 		mntmCaricaRicetta.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Statement stmt;
-				try {
-					stmt = connection.createStatement();
-					System.out.println("Checking existing brewer...");
-					String sql = "SELECT * FROM birraio WHERE username = " + userField.getText() + " AND password = " + passwordField.getText();
-					ResultSet rs = stmt.executeQuery(sql);
-					if(rs.next()) {
-						JDialog d = new JDialog(frame, "Hello "+ rs.getString("nome"), true);
-					    d.setLocationRelativeTo(frame);
-					    d.setVisible(true);
-					}
-					rs.close();
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-				}
+				
 			}
 		});
 		mnRicetta.add(mntmCaricaRicetta);

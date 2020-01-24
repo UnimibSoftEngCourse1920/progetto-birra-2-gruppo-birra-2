@@ -38,8 +38,7 @@ public class createTables {
 		sql = "CREATE TABLE `ingrediente` (\r\n" + 
 				"  `nome` varchar(15) NOT NULL,\r\n" + 
 				"  `id_ingrediente` int(11) NOT NULL,\r\n" + 
-				"  `tipo` enum('zucchero','lievito','additivi','malto','luppolo') NOT NULL,\r\n" + 
-				"  `id_birra` int(11) NOT NULL\r\n" + 
+				"  `tipo` enum('zucchero','lievito','additivi','malto','luppolo') NOT NULL\r\n" +
 				")";
 		stmt.executeUpdate(sql);
 		sql = "ALTER TABLE `attrezzatura`\r\n" + 
@@ -58,8 +57,7 @@ public class createTables {
 				"  ADD KEY `id_birraio` (`id_birraio`);";
 		stmt.executeUpdate(sql);
 		sql = "ALTER TABLE `ingrediente`\r\n" + 
-				"  ADD PRIMARY KEY (`id_ingrediente`),\r\n" + 
-				"  ADD KEY `id_birra` (`id_birra`);";
+				"  ADD PRIMARY KEY (`id_ingrediente`);";
 		stmt.executeUpdate(sql);
 		sql = "ALTER TABLE `attrezzatura`\r\n" + 
 				"  MODIFY `id_attrezzatura` int(11) NOT NULL AUTO_INCREMENT;";
@@ -80,8 +78,19 @@ public class createTables {
 				"  ADD CONSTRAINT `dispensa_ibfk_1` FOREIGN KEY (`id_ingrediente`) REFERENCES `ingrediente` (`id_ingrediente`),\r\n" + 
 				"  ADD CONSTRAINT `dispensa_ibfk_2` FOREIGN KEY (`id_birraio`) REFERENCES `birraio` (`id_birraio`);";
 		stmt.executeUpdate(sql);
-		sql = "ALTER TABLE `ingrediente`\r\n" + 
-				"  ADD CONSTRAINT `ingrediente_ibfk_1` FOREIGN KEY (`id_birra`) REFERENCES `birra` (`id_birra`);";
+		sql = "CREATE TABLE `ricetta` (\r\n" + 
+				"  `id_birra` int(11) NOT NULL,\r\n" + 
+				"  `id_ingrediente` int(11) NOT NULL,\r\n" + 
+				"  `quantita` int(11) DEFAULT NULL\r\n" + 
+				")";
+		stmt.executeUpdate(sql);
+		sql = "ALTER TABLE `ricetta`\r\n" + 
+				"  ADD PRIMARY KEY (`id_birra`,`id_ingrediente`),\r\n" + 
+				"  ADD KEY `idfk_id_ingrediente` (`id_ingrediente`);";
+		stmt.executeUpdate(sql);
+		sql = "ALTER TABLE `ricetta`\r\n" + 
+				"  ADD CONSTRAINT `idfk_id_birra` FOREIGN KEY (`id_birra`) REFERENCES `birra` (`id_birra`),\r\n" + 
+				"  ADD CONSTRAINT `idfk_id_ingrediente` FOREIGN KEY (`id_ingrediente`) REFERENCES `ingrediente` (`id_ingrediente`);";
 		stmt.executeUpdate(sql);
 		System.out.println("Created table in given database..");
 	}
