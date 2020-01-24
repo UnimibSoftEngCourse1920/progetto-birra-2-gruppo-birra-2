@@ -45,7 +45,7 @@ public class connectionDB {
 	public void setDBCredential() throws IOException {
 
 //		Mock to deleted and uncommented previous lines
-		setDbpathString("jdbc:mysql://localhost:3307/");//delete autobrewday
+		setDbpathString("jdbc:mysql://localhost:3306/");//delete autobrewday
 		setUsernameString("root");
 		setPwdString("");
 	}
@@ -78,37 +78,26 @@ public class connectionDB {
 		}
 	}
 	
-	public void createDBConnection() {
+	public Connection createDBConnection() {
 		Connection connection = null;
 		try {
 			if(getNameDBString() != null) //case where database already exists
 			{
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			connection = DriverManager.getConnection(getDbpathString()+getNameDBString(), getUsernameString(), getPwdString()); 
-			if (!connection.isClosed()) {
-				System.out.println("Successfully connected to database..."); 
-				createTables createTables= new createTables(); 
-				createTables.setTables(connection); 
-				}
+				Class.forName("com.mysql.jdbc.Driver").newInstance();
+				connection = DriverManager.getConnection(getDbpathString()+getNameDBString(), getUsernameString(), getPwdString()); 
+				if (!connection.isClosed()) {
+					System.out.println("Successfully connected to database..."); 
+					createTables createTables= new createTables(); 
+					createTables.setTables(connection); 
+					}
 			}
-		} catch (Exception e) {
-			System.err.println("Excpetion: " + e.getMessage());
-		} finally {
-			if (connection != null)
-				closingConnection(connection);
-		}
-	}
-	
-	public  Connection connectionToDB() {
-		Connection connection = null;
-		if(getNameDBString() == null)
-			setNameDBString("brewdaydb");
-		try {
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			connection = DriverManager.getConnection(getDbpathString()+getNameDBString(), getUsernameString(), getPwdString()); 
-			if (!connection.isClosed()) {
-				System.out.println("Successfully connected to database...");
-				}
+			else {
+				setNameDBString("brewdaydb");
+				Class.forName("com.mysql.jdbc.Driver").newInstance();
+				connection = DriverManager.getConnection(getDbpathString()+getNameDBString(), getUsernameString(), getPwdString()); 
+				if (!connection.isClosed())
+					System.out.println("Successfully connected to database...");
+			}
 		} catch (Exception e) {
 			System.err.println("Excpetion: " + e.getMessage());
 		}
