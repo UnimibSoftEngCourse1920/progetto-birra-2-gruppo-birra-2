@@ -81,7 +81,7 @@ public class createTables {
 		sql = "CREATE TABLE `ricetta` (\r\n" + 
 				"  `id_birra` int(11) NOT NULL,\r\n" + 
 				"  `id_ingrediente` int(11) NOT NULL,\r\n" + 
-				"  `quantita` int(11) DEFAULT NULL\r\n" + 
+				"  `quantita` double NULL\r\n" + 
 				")";
 		stmt.executeUpdate(sql);
 		sql = "ALTER TABLE `ricetta`\r\n" + 
