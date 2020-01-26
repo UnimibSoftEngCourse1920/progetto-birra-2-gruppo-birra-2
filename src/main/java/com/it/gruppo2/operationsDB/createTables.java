@@ -79,14 +79,14 @@ public class createTables {
 				"  ADD CONSTRAINT `dispensa_ibfk_2` FOREIGN KEY (`id_birraio`) REFERENCES `birraio` (`id_birraio`);";
 		stmt.executeUpdate(sql);
 		sql = "CREATE TABLE `ricetta` (\r\n" + 
+				"  `id_ricetta` int(11) NOT NULL AUTO_INCREMENT,\r\n" +
 				"  `id_birra` int(11) NOT NULL,\r\n" + 
 				"  `id_ingrediente` int(11) NOT NULL,\r\n" + 
 				"  `quantita` double NULL\r\n" + 
 				")";
 		stmt.executeUpdate(sql);
 		sql = "ALTER TABLE `ricetta`\r\n" + 
-				"  ADD PRIMARY KEY (`id_birra`,`id_ingrediente`),\r\n" + 
-				"  ADD KEY `idfk_id_ingrediente` (`id_ingrediente`);";
+				"  ADD PRIMARY KEY ('id_ricetta', 'id_ingrediente', 'id_birra');";
 		stmt.executeUpdate(sql);
 		sql = "ALTER TABLE `ricetta`\r\n" + 
 				"  ADD CONSTRAINT `idfk_id_birra` FOREIGN KEY (`id_birra`) REFERENCES `birra` (`id_birra`),\r\n" + 

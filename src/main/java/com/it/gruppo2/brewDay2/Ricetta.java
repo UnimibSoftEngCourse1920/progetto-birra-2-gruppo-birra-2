@@ -3,13 +3,14 @@ package com.it.gruppo2.brewDay2;
 public class Ricetta extends Ingrediente {
 
 	private Double quantita;
-	private Integer id_birra, id_ingrediente;
+	private Integer id_birra, id_ingrediente, id_ricetta;
 
-	public Ricetta(double quantita, int id_birra, int id_ingrediente) {
+	public Ricetta(int id_ricetta, double quantita, int id_birra, int id_ingrediente) {
 		super();
 		this.quantita = quantita;
 		this.id_birra = id_birra;
 		this.id_ingrediente = id_ingrediente;
+		this.setId_ricetta(id_ricetta);
 	}
 	
 	public Double getQuantita() {
@@ -51,6 +52,20 @@ public class Ricetta extends Ingrediente {
 	 */
 	public void setId_ingrediente(int id_ingrediente) {
 		this.id_ingrediente = id_ingrediente;
+	}
+
+	/**
+	 * @return the id_ricetta
+	 */
+	public Integer getId_ricetta() {
+		return id_ricetta;
+	}
+
+	/**
+	 * @param id_ricetta the id_ricetta to set
+	 */
+	public void setId_ricetta(int id_ricetta) {
+		this.id_ricetta = id_ricetta;
 	}
 
 

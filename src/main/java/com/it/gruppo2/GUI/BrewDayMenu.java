@@ -21,7 +21,9 @@ import javax.swing.event.ListSelectionListener;
 public class BrewDayMenu {
 
 	private JFrame frame;
-
+	private JList<String> list = new JList<String>();
+	private ArrayList<Ricetta> ricettArrayList = new ArrayList<Ricetta>();
+	private ArrayList<Birra> birra = new ArrayList<Birra>();
 	/**
 	 * Launch the application.
 	 */
@@ -53,7 +55,7 @@ public class BrewDayMenu {
 	 * Initialize the contents of the frame.
 	 * @throws SQLException 
 	 */
-	private void initialize(final Connection connection, Birraio brewerBirraio) throws SQLException {
+	private void initialize(final Connection connection, final Birraio brewerBirraio) throws SQLException {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 820, 457);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -67,7 +69,6 @@ public class BrewDayMenu {
 		
 		String sql = "SELECT COUNT(id_birra) AS numBirre FROM birra WHERE id_birraio = '" + brewerBirraio.getId_birraio() + "'";
 		ResultSet rs = stmt.executeQuery(sql);
-		final ArrayList<Birra> birra = new ArrayList<Birra>();
 		int max=0;
 		if(rs.next()) {
 			max=rs.getInt("numBirre");
@@ -90,19 +91,23 @@ public class BrewDayMenu {
 		final JList<String> listd = new JList<String>(demoList);
 		listd.setBounds(64, 32, 200, 200);
 		frame.getContentPane().add(listd);
+		
+		list.setBounds(300, 32, 200, 200);
+		frame.getContentPane().add(list);
+		
 		rs.close();
 		
 		listd.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                 int index = listd.getSelectedIndex();
-                
+                RicetteBirra ricetteBirra = new RicetteBirra();
+                ricetteBirra.invokeGUI(connection, index, brewerBirraio);
                 Statement stmt;
 				try {
 					stmt = connection.createStatement();
 	                String sql = "SELECT COUNT(id_birra) AS numRicette FROM ricetta WHERE id_birra = '" + (int)birra.get(index).getId_birra() + "'";
 	        		ResultSet rs;
 					rs = stmt.executeQuery(sql);
-	        		final ArrayList<Ricetta> ricettArrayList = new ArrayList<Ricetta>();
 	        		int max=0;
 	        		if(rs.next()) {
 	        			max=rs.getInt("numRicette");
@@ -114,35 +119,24 @@ public class BrewDayMenu {
 	        		if(rs.next())
 	        		{
 	        			for(int i=0; i<max; i++, rs.next()) {
-	        				ricettArrayList.add(i,new Ricetta(rs.getDouble("quantita"),rs.getInt("id_birra"), rs.getInt("id_ingrediente")));
-	        				ricetteListModel.addElement(ricettArrayList.get(i).getQuantita().toString());
+	        				ricettArrayList.add(i,new Ricetta(rs.getInt("id_ricetta"),rs.getDouble("quantita"),rs.getInt("id_birra"), rs.getInt("id_ingrediente")));
+	        				ricetteListModel.addElement(ricettArrayList.get(i).getId_ricetta().toString());
 	        			}
 	        		}else {
 	        			ricetteListModel.addElement("Non esiste alcuna ricetta!");
 	        		}
-	        		JList<String> listr = new JList<String>(ricetteListModel);
-	        		listr.setBounds(305, 32, 200, 200);
-	        		frame.getContentPane().add(listr);
+	        		
+	        		list = new JList<String>(ricetteListModel);
+	        		list.setValueIsAdjusting(true);
+	        		list.setBounds(300, 32, 200, 200);
+	        		frame.getContentPane().add(list);
+	        		
 	        		rs.close();
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
             }
         });
-		
-		/*sql = "SELECT id_birra FROM ricetta WHERE id_birra = '" + birra.getId_birra()+ "'";
-		rs = stmt.executeQuery(sql);
-		
-		sql = "SELECT (COUNT id_birra) AS numRicette FROM ricetta WHERE id_birra = '" + birra.getId_birra()+ "'";
-		rs1 = stmt.executeQuery(sql);
-		rs1.next();
-		
-		Ricetta[] ricetta = new Ricetta[rs1.getInt("numBirre")];
-		
-		for(int i=0; rs.next(); i++) {
-			ricetta[i]=new Ricetta(rs.getInt("id_"), rs.getString("nome"), rs.getString("tipo"));
-		}*/
-		
 		
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
