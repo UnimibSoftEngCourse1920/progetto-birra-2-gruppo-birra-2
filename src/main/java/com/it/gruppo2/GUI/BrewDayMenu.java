@@ -20,7 +20,9 @@ import javax.swing.event.ListSelectionListener;
 
 public class BrewDayMenu {
 
-	private JFrame frame;
+	JFrame frame;
+	private ArrayList<Ricetta> ricettArrayList = new ArrayList<Ricetta>();
+	private ArrayList<Attrezzatura> attrezzaturaArrayList = new ArrayList<Attrezzatura>();
 	private ArrayList<Birra> birraList = new ArrayList<Birra>();
 	/**
 	 * Launch the application.
@@ -63,50 +65,50 @@ public class BrewDayMenu {
 		Statement stmt;
 		stmt = connection.createStatement();
 		
-		//crazione oggetti birra bsati sul database
-		
-		String sql = "SELECT COUNT(id_birra) AS numBirre FROM birra WHERE id_birraio = '" + brewerBirraio.getId_birraio() + "'";
-		ResultSet rs = stmt.executeQuery(sql);
-		int max=0;
-		if(rs.next()) {
-			max=rs.getInt("numBirre");
-			
-		}
-		rs.close();
-			
-		sql = "SELECT * FROM birra WHERE id_birraio = '" + brewerBirraio.getId_birraio()+ "'";
-		rs = stmt.executeQuery(sql);
-		DefaultListModel<String> nomeList = new DefaultListModel<String>();
-		DefaultListModel<String> tipoList = new DefaultListModel<String>();
-		if(rs.next())
-		{
-			for(int i=0; i<max; i++, rs.next()) {
-				birraList.add(i,new Birra(rs.getInt("id_birra"), rs.getString("nome"), rs.getString("tipo"), rs.getInt("id_birraio")));
-				nomeList.addElement(birraList.get(i).getNome());
-				tipoList.addElement(birraList.get(i).getTipo());
-			}
-		}else {
-			nomeList.addElement("Non esiste alcuna birra!");
-			tipoList.addElement("");
-		}
-		final JList<String> listd = new JList<String>(nomeList);
-		listd.setBounds(64, 32, 200, 200);
-		frame.getContentPane().add(listd);
-		
-		final JList<String> listr = new JList<String>(tipoList);
-		listr.setBounds(265, 32, 200, 200);
-		frame.getContentPane().add(listr);
-		
-		rs.close();
-		
-		listd.addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-                int index = listd.getSelectedIndex();
-                RicetteBirra ricetteBirra = new RicetteBirra(connection, birraList.get(index));
-                ricetteBirra.invokeGUI(connection, birraList.get(index));
-                frame.dispose();
-            }
-        });
+		//crazione oggetti birra basati sul database
+
+				String sql = "SELECT COUNT(id_birra) AS numBirre FROM birra WHERE id_birraio = '" + brewerBirraio.getId_birraio() + "'";
+				ResultSet rs = stmt.executeQuery(sql);
+				int max=0;
+				if(rs.next()) {
+					max=rs.getInt("numBirre");
+					
+				}
+				rs.close();
+					
+				sql = "SELECT * FROM birra WHERE id_birraio = '" + brewerBirraio.getId_birraio()+ "'";
+				rs = stmt.executeQuery(sql);
+				DefaultListModel<String> nomeList = new DefaultListModel<String>();
+				DefaultListModel<String> tipoList = new DefaultListModel<String>();
+				if(rs.next())
+				{
+					for(int i=0; i<max; i++, rs.next()) {
+						birraList.add(i,new Birra(rs.getInt("id_birra"), rs.getString("nome"), rs.getString("tipo"), rs.getInt("id_birraio")));
+						nomeList.addElement(birraList.get(i).getNome());
+						tipoList.addElement(birraList.get(i).getTipo());
+					}
+				}else {
+					nomeList.addElement("Non esiste alcuna birra!");
+					tipoList.addElement("");
+				}
+				final JList<String> listd = new JList<String>(nomeList);
+				listd.setBounds(64, 32, 200, 200);
+				frame.getContentPane().add(listd);
+				
+				final JList<String> listr = new JList<String>(tipoList);
+				listr.setBounds(265, 32, 200, 200);
+				frame.getContentPane().add(listr);
+				
+				rs.close();
+				
+				listd.addListSelectionListener(new ListSelectionListener() {
+		          public void valueChanged(ListSelectionEvent e) {
+		              int index = listd.getSelectedIndex();
+		              RicetteBirra ricetteBirra = new RicetteBirra(connection, birraList.get(index));
+		              ricetteBirra.invokeGUI(connection, birraList.get(index));
+		              frame.dispose();
+		          }
+		      });
 		
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
@@ -134,7 +136,28 @@ public class BrewDayMenu {
 		JMenu mnProfilo = new JMenu("Profilo");
 		menuBar.add(mnProfilo);
 		
-		JMenuItem mntmNewMenuItem = new JMenuItem("Log out");
-		mnProfilo.add(mntmNewMenuItem);
+		JMenuItem mntmLogOut = new JMenuItem("Log out");
+		mnProfilo.add(mntmLogOut);
+		
+		JMenu mnWSIBT = new JMenu("WSIBT");
+		menuBar.add(mnWSIBT);
+		
+		JMenuItem mntmConsigliami = new JMenuItem("Consigliami");
+		mnWSIBT.add(mntmConsigliami);
+		mntmConsigliami.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					WSIBT grapInterf = new WSIBT(connection, brewerBirraio, ricettArrayList, attrezzaturaArrayList);
+					grapInterf.invokeGUI(connection, brewerBirraio, ricettArrayList, attrezzaturaArrayList);
+					frame.dispose();
+				} catch (SQLException e1) {
+					//
+					e1.printStackTrace();
+				}
+				
+			}
+		});
+		
 	}
+	
 }
