@@ -1,6 +1,6 @@
 package com.it.gruppo2.GUI;
 
-import java.awt.EventQueue; 
+import java.awt.EventQueue;  
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,11 +12,13 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 
 import com.it.gruppo2.brewDay2.Birra;
+import com.it.gruppo2.brewDay2.Birraio;
 import com.it.gruppo2.brewDay2.Ingrediente;
 import com.it.gruppo2.brewDay2.Ricetta;
 import javax.swing.JMenuBar;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class RicetteBirra {
 
@@ -28,11 +30,11 @@ public class RicetteBirra {
 	/**
 	 * Launch the application.
 	 */
-	public void invokeGUI(final Connection connection,final Birra birra) {
+	public void invokeGUI(final Connection connection,final Birra birra, final Birraio brewerBirraio) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					RicetteBirra window = new RicetteBirra(connection, birra);
+					RicetteBirra window = new RicetteBirra(connection, birra, brewerBirraio);
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -44,17 +46,17 @@ public class RicetteBirra {
 	/**
 	 * Create the application.
 	 */
-	public RicetteBirra(Connection connection, Birra birra) {
-		initialize(connection, birra);
+	public RicetteBirra(Connection connection, Birra birra, Birraio brewerBirraio) {
+		initialize(connection, birra, brewerBirraio);
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize(Connection connection,final Birra birra) {
+	private void initialize(final Connection connection,final Birra birra, final Birraio brewerBirraio) {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 773, 453);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		Statement  stmt2, stmt4;
 		try {
@@ -110,20 +112,19 @@ public class RicetteBirra {
     		frame.getContentPane().add(listWeight);
     		
     		JMenuBar menuBar = new JMenuBar();
-    		menuBar.setBounds(0, 0, 655, 31);
+    		menuBar.setBounds(0, 0, 751, 31);
     		frame.getContentPane().add(menuBar);
     		
-    		JMenu mnAction = new JMenu("Azione");
-    		menuBar.add(mnAction);
-    		
-    		JMenuItem plsAdd = new JMenuItem("Aggiungi Ricetta");
-    		mnAction.add(plsAdd);
-    		
-    		JMenuItem plsRmv = new JMenuItem("Rimuovi Ricetta");
-    		mnAction.add(plsRmv);
-    		
     		JMenuItem plsBack = new JMenuItem("Indietro");
-    		mnAction.add(plsBack);
+    		plsBack.addMouseListener(new MouseAdapter() {
+    			@Override
+    			public void mousePressed(MouseEvent arg0) {
+    				BrewDayMenu brewDayMenu = new BrewDayMenu(connection, brewerBirraio);
+    				brewDayMenu.invokeGUI(connection, brewerBirraio);
+    				frame.dispose();
+    			}
+    		});
+    		menuBar.add(plsBack);
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}

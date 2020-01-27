@@ -52,8 +52,7 @@ public class WSIBT {
 		frame.setBounds(100, 100, 820, 457);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
-		
-		
+
 		JLabel lblTitolo = new JLabel("Ricetta consigiata:");
 		lblTitolo.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		lblTitolo.setBounds(295, 37, 204, 55);
