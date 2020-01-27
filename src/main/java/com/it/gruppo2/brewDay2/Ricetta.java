@@ -4,13 +4,15 @@ public class Ricetta extends Ingrediente {
 
 	private Double quantita;
 	private Integer id_birra, id_ingrediente, id_ricetta;
+	private String nome;
 
-	public Ricetta(int id_ricetta, double quantita, int id_birra, int id_ingrediente) {
+	public Ricetta(int id_ricetta, double quantita, int id_birra, int id_ingrediente, String nome) {
 		super();
 		this.quantita = quantita;
 		this.id_birra = id_birra;
 		this.id_ingrediente = id_ingrediente;
-		this.setId_ricetta(id_ricetta);
+		this.id_ricetta = id_ricetta;
+		this.nome = nome;
 	}
 	
 	public Double getQuantita() {
@@ -68,7 +70,19 @@ public class Ricetta extends Ingrediente {
 		this.id_ricetta = id_ricetta;
 	}
 
+	/**
+	 * @param name the name to set
+	 */
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
 
+	/**
+	 * @return the name
+	 */
+	public String getNome() {
+		return nome;
+	}
 	
 	
 	
