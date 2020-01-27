@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 import com.it.gruppo2.brewDay2.Attrezzatura;
 import com.it.gruppo2.brewDay2.Birraio;
@@ -67,21 +68,8 @@ public class WSIBT {
 		JButton btnVediRicetta = new JButton("Vedi ricetta");
 		btnVediRicetta.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
-					Statement stmt1=connection.createStatement();
-					String sql = "SELECT nome FROM birra WHERE id_birra = 1";
-					ResultSet rs1;
-					rs1 = stmt1.executeQuery(sql);
-					if(rs1.next())
-						lblWSIBT.setText(rs1.getString("nome"));
-					rs1.close();
-					
-					
-					
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				
+				JOptionPane.showMessageDialog(null, "BIRRA");
 			}
 		});
 		btnVediRicetta.setBounds(295, 326, 89, 23);
@@ -97,13 +85,20 @@ public class WSIBT {
 			
 			stmt = connection.createStatement();
 			ResultSet rs;
-			String sql = "SELECT distinct ricetta.id_ingrediente, ricetta.id_birra,  ricetta.quantita, attrezzatura.capacita FROM ricetta " + 
-					"INNER JOIN ingrediente ON ingrediente.id_ingrediente = ricetta.id_ingrediente " + 
-					"INNER JOIN dispensa ON dispensa.id_ingrediente = ingrediente.id_ingrediente " + 
-					"INNER JOIN birraio ON birraio.id_birraio =  dispensa.id_birraio " + 
-					"INNER JOIN attrezzatura ON attrezzatura.id_birraio= birraio.id_birraio " + 
+			String sql = "SELECT distinct ricetta.* FROM ricetta " +
+					"INNER JOIN ingrediente ON ingrediente.id_ingrediente = ricetta.id_ingrediente " +
+					"INNER JOIN dispensa ON dispensa.id_ingrediente = ingrediente.id_ingrediente "+
+					"INNER JOIN birraio ON birraio.id_birraio =  dispensa.id_birraio " +
+					"INNER JOIN attrezzatura ON attrezzatura.id_birraio= birraio.id_birraio " +
 					"WHERE ricetta.quantita < dispensa.qta " +
-					"ORDER BY attrezzatura.capacita desc;" ;
+					"HAVING ( " +
+					"SELECT COUNT(ricetta.id_ingrediente) " +
+					"FROM ricetta " +
+					"INNER JOIN ingrediente ON ingrediente.id_ingrediente = ricetta.id_ingrediente " +
+					"INNER JOIN dispensa ON dispensa.id_ingrediente = ingrediente.id_ingrediente " +
+					"WHERE ricetta.quantita < dispensa.qta " +
+					"GROUP BY id_ricetta)=4; ";
+							
 
 			rs = stmt.executeQuery(sql);
 			
