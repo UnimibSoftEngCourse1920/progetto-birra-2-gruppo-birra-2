@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.ListModel;
 
 import com.it.gruppo2.brewDay2.*;
 
@@ -17,13 +18,16 @@ import javax.swing.JList;
 import javax.swing.DefaultListModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 
 public class BrewDayMenu {
 
-	private JFrame frame;
-	private JList<String> list = new JList<String>();
+	JFrame frame;
 	private ArrayList<Ricetta> ricettArrayList = new ArrayList<Ricetta>();
+	private ArrayList<Attrezzatura> attrezzaturaArrayList = new ArrayList<Attrezzatura>();
 	private ArrayList<Birra> birra = new ArrayList<Birra>();
+	private final Action action = new SwingAction();
 	/**
 	 * Launch the application.
 	 */
@@ -88,18 +92,19 @@ public class BrewDayMenu {
 		}else {
 			demoList.addElement("Non esiste alcuna birra!");
 		}
-		final JList<String> listd = new JList<String>(demoList);
-		listd.setBounds(64, 32, 200, 200);
-		frame.getContentPane().add(listd);
+		final JList<String> listBirre = new JList<String>(demoList);
+		listBirre.setBounds(64, 32, 200, 200);
+		frame.getContentPane().add(listBirre);
 		
-		list.setBounds(300, 32, 200, 200);
-		frame.getContentPane().add(list);
+		final JList<String> listAttrezzature = new JList<String>(demoList);
+		listAttrezzature.setBounds(332, 32, 200, 200);
+		frame.getContentPane().add(listAttrezzature);
 		
 		rs.close();
 		
-		listd.addListSelectionListener(new ListSelectionListener() {
+		listBirre.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
-                int index = listd.getSelectedIndex();
+                int index = listBirre.getSelectedIndex();
                 RicetteBirra ricetteBirra = new RicetteBirra();
                 ricetteBirra.invokeGUI(connection, index, brewerBirraio);
                 Statement stmt;
@@ -125,16 +130,41 @@ public class BrewDayMenu {
 	        		}else {
 	        			ricetteListModel.addElement("Non esiste alcuna ricetta!");
 	        		}
+	        		rs.close();
 	        		
-	        		list = new JList<String>(ricetteListModel);
-	        		list.setValueIsAdjusting(true);
-	        		list.setBounds(300, 32, 200, 200);
-	        		frame.getContentPane().add(list);
+	        		DefaultListModel<String> attrezzaturaListModel = new DefaultListModel<String>();
+					
+	        		
+	                sql = "SELECT COUNT(id_attrezzatura) AS numAtt FROM attrezzatura WHERE id_birraio = '" + (int)birra.get(index).getId_birraio() + "'";
+					rs = stmt.executeQuery(sql);
+	        		max=0;
+	        		if(rs.next()) {
+	        			max=rs.getInt("numAtt");
+	        		}
+	        		rs.close();
+	        		sql = "SELECT * FROM attrezzatura WHERE id_birraio = '" + (int)birra.get(index).getId_birraio() + "'";
+	        		rs = stmt.executeQuery(sql);
+	        		
+	        		if(rs.next())
+	        		{
+	        			for(int i=0; i<max; i++, rs.next()) {
+	        				
+	        				
+	        				attrezzaturaArrayList.add(i,new Attrezzatura(rs.getInt("id_attrezzatura"),rs.getString("nome"),rs.getInt("capacita"), rs.getInt("id_birraio")));
+	        				attrezzaturaListModel.addElement(attrezzaturaArrayList.get(i).getId_attrezzatura().toString());
+	        			}
+	        		}else {
+	        			attrezzaturaListModel.addElement("Non esiste alcuna ricetta!");
+	        		}
+	        		
+	        		
 	        		
 	        		rs.close();
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
+				
+
             }
         });
 		
@@ -164,7 +194,35 @@ public class BrewDayMenu {
 		JMenu mnProfilo = new JMenu("Profilo");
 		menuBar.add(mnProfilo);
 		
-		JMenuItem mntmNewMenuItem = new JMenuItem("Log out");
-		mnProfilo.add(mntmNewMenuItem);
+		JMenuItem mntmLogOut = new JMenuItem("Log out");
+		mnProfilo.add(mntmLogOut);
+		
+		JMenu mnWSIBT = new JMenu("WSIBT");
+		menuBar.add(mnWSIBT);
+		
+		JMenuItem mntmConsigliami = new JMenuItem("Consigliami");
+		mnWSIBT.add(mntmConsigliami);
+		mntmConsigliami.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					WSIBT grapInterf = new WSIBT(connection, brewerBirraio, ricettArrayList, attrezzaturaArrayList);
+					grapInterf.invokeGUI(connection, brewerBirraio, ricettArrayList, attrezzaturaArrayList);
+					frame.dispose();
+				} catch (SQLException e1) {
+					//
+					e1.printStackTrace();
+				}
+				
+			}
+		});
+		
+	}
+	private class SwingAction extends AbstractAction {
+		public SwingAction() {
+			putValue(NAME, "SwingAction");
+			putValue(SHORT_DESCRIPTION, "Some short description");
+		}
+		public void actionPerformed(ActionEvent e) {
+		}
 	}
 }
