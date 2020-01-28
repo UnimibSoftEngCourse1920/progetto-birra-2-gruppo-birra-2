@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
 import com.it.gruppo2.brewDay2.*;
 
@@ -19,6 +20,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.SwingConstants;
 
 public class BrewDayMenu {
 
@@ -26,20 +28,72 @@ public class BrewDayMenu {
 	private ArrayList<Ricetta> ricettArrayList = new ArrayList<Ricetta>();
 	private ArrayList<Attrezzatura> attrezzaturaArrayList = new ArrayList<Attrezzatura>();
 	private ArrayList<Birra> birraList = new ArrayList<Birra>();
+	private ArrayList<Ingrediente> ingredienteList = new ArrayList<Ingrediente>();
+	private DefaultListModel<String> ingrList = new DefaultListModel<String>();
 	/**
 	 * Launch the application.
 	 */
 	public void invokeGUI(final Connection connection, final Birraio brewerBirraio) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					BrewDayMenu window = new BrewDayMenu(connection, brewerBirraio);
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
+		
+		Statement stmt;
+		try {
+			stmt = connection.createStatement();
+			String ldsList = new String();
+			String sql = "SELECT distinct ingrediente.* FROM dispensa " +
+					"INNER JOIN ingrediente ON dispensa.id_ingrediente = ingrediente.id_ingrediente " +
+					"WHERE dispensa.qta < 2 AND dispensa.id_birraio ='" + brewerBirraio.getId_birraio()+ "'";
+			ResultSet rs = stmt.executeQuery(sql);
+			Statement stmt1 = connection.createStatement();
+			if(rs.next())
+			{
+				rs.beforeFirst();
+				int i=0;
+				while(rs.next()==true) {
+					//inserisco tutte le birre in una lista
+					ingredienteList.add(i,new Ingrediente(rs.getInt("id_ingrediente"), rs.getString("nome"), rs.getString("tipo")));
+					ldsList+=(ingredienteList.get(i).getNome() + ", ");
+					sql="UPDATE `brewdaydb`.`dispensa` SET `lds`='Y' WHERE  `id_ingrediente`='" + ingredienteList.get(i).getId_ingrediente() 
+							+"' AND `id_birraio`='" + brewerBirraio.getId_birraio()+ "'";
+					stmt1.executeUpdate(sql);
+					ingrList.addElement(ingredienteList.get(i).getNome());
+					i++;
 				}
+				
+				int input = JOptionPane.showOptionDialog(frame, "Ingredienti bassi in dispensa: " +ldsList, "Vuoi aggiungere alla lista della spesa?", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+
+				if(input == JOptionPane.YES_OPTION)
+				{
+					ListaDellaSpesa lds = new ListaDellaSpesa(connection, brewerBirraio);
+					lds.invokeGUI(connection, brewerBirraio);
+					frame.dispose();
+				}
+				else
+				{
+					EventQueue.invokeLater(new Runnable() {
+						public void run() {
+							try {
+								BrewDayMenu window = new BrewDayMenu(connection, brewerBirraio);
+								window.frame.setVisible(true);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					});
+				}
+				
 			}
-		});
+			else {
+				BrewDayMenu window = new BrewDayMenu(connection, brewerBirraio);
+				window.frame.setVisible(true);
+			}
+				
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		};
+		
+		
+		
 	}
 
 	/**
@@ -82,6 +136,7 @@ public class BrewDayMenu {
 		rs = stmt.executeQuery(sql);
 		DefaultListModel<String> nomeList = new DefaultListModel<String>();
 		DefaultListModel<String> noteList = new DefaultListModel<String>();
+		
 		if(rs.next())
 		{
 			for(int i=0; i<max; i++, rs.next()) {
@@ -94,6 +149,10 @@ public class BrewDayMenu {
 			nomeList.addElement("Non esiste alcuna birra!");
 			noteList.addElement("");
 		}
+		
+		rs.close();
+		
+		
 		final JList<String> listd = new JList<String>(nomeList);
 		listd.setBounds(64, 32, 200, 200);
 		frame.getContentPane().add(listd);
@@ -101,9 +160,7 @@ public class BrewDayMenu {
 		final JList<String> listr = new JList<String>(noteList);
 		listr.setBounds(265, 32, 200, 200);
 		frame.getContentPane().add(listr);
-		
-		rs.close();
-		
+
 		listd.addListSelectionListener(new ListSelectionListener() {
           public void valueChanged(ListSelectionEvent e) {
               int index = listd.getSelectedIndex();
@@ -188,6 +245,27 @@ public class BrewDayMenu {
 		});
 		mnIngredienti.add(mntmAggiungiIngrediente);
 		
+		JMenu mnWSIBT = new JMenu("WSIBT");
+		menuBar.add(mnWSIBT);
+		
+		JMenuItem mntmConsigliami = new JMenuItem("Consigliami");
+		mnWSIBT.add(mntmConsigliami);
+		
+		JMenu mnLista = new JMenu("Lista della spesa");
+		menuBar.add(mnLista);
+		
+		JMenuItem mntmVediLista = new JMenuItem("Vedi lista ");
+		mntmVediLista.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				ListaDellaSpesa lds = new ListaDellaSpesa(connection, brewerBirraio);
+				lds.invokeGUI(connection, brewerBirraio);
+				frame.dispose();
+			}
+		});
+		mntmVediLista.setHorizontalAlignment(SwingConstants.TRAILING);
+		mnLista.add(mntmVediLista);
+		
 		JMenu mnProfilo = new JMenu("Profilo");
 		menuBar.add(mnProfilo);
 		
@@ -200,13 +278,8 @@ public class BrewDayMenu {
 				frame.dispose();
 			}
 		});
+		
 		mnProfilo.add(mntmLogOut);
-		
-		JMenu mnWSIBT = new JMenu("WSIBT");
-		menuBar.add(mnWSIBT);
-		
-		JMenuItem mntmConsigliami = new JMenuItem("Consigliami");
-		mnWSIBT.add(mntmConsigliami);
 		mntmConsigliami.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -253,5 +326,4 @@ public class BrewDayMenu {
 		});
 		
 	}
-	
 }
