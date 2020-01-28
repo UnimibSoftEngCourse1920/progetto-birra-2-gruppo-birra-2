@@ -141,17 +141,6 @@ public class BrewDayMenu {
 		});
 		mnRicetta.add(mntmEliminaRicetta);
 		
-		JMenuItem mntmVisualizzaRicetta = new JMenuItem("Visualizza ricetta");
-		mntmVisualizzaRicetta.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				CRUDoperationsRicetta newRic = new CRUDoperationsRicetta(connection, brewerBirraio, "visRic");
-				newRic.invokeGUI(connection, brewerBirraio, "visRic");
-				frame.dispose();
-			}
-		});
-		mnRicetta.add(mntmVisualizzaRicetta);
-		
 		JMenuItem mntmModificaRicetta = new JMenuItem("Modifica ricetta");
 		mntmModificaRicetta.addMouseListener(new MouseAdapter() {
 			@Override

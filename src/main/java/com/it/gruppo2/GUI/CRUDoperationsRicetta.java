@@ -1,6 +1,6 @@
 package com.it.gruppo2.GUI;
 
-import java.awt.EventQueue;
+import java.awt.EventQueue; 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import com.it.gruppo2.brewDay2.Birra;
 import com.it.gruppo2.brewDay2.Birraio;
 import com.it.gruppo2.brewDay2.Ingrediente;
+import com.it.gruppo2.brewDay2.Ricetta;
 
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -21,6 +22,8 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
+import javax.swing.JInternalFrame;
+import javax.swing.JPanel;
 
 public class CRUDoperationsRicetta {
 
@@ -29,15 +32,18 @@ public class CRUDoperationsRicetta {
 	private JTextField txtQta;
 	private JComboBox<String> comboBirra;
 	private JComboBox<String> comboIngrediente;
+	private JComboBox<String> comboRicetta;
 	private ArrayList<Birra> birraList;
 	private ArrayList<Ingrediente> ingredienteList;
+	private ArrayList<Ricetta> ricettaList;
+	
 	
 	/**
 	 * Launch the application.
 	 */
 	public void invokeGUI(final Connection connection, final Birraio birraio, final String operation) {
 		EventQueue.invokeLater(new Runnable() {
-			public void run() {
+			public void run() { 
 				try {
 					CRUDoperationsRicetta window = new CRUDoperationsRicetta(connection, birraio, operation);
 					window.frame.setVisible(true);
@@ -61,11 +67,12 @@ public class CRUDoperationsRicetta {
 	}
 
 	/**
-	 * Initialize the contents of the frame.
+	 * Initialize the contents of the frame. 
 	 * @throws SQLException 
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private void initialize(final Connection connection, final Birraio birraio, String operation) throws SQLException {
+	//funzione principale di smistamento
+	protected void initialize(final Connection connection, final Birraio birraio, final String operation) throws SQLException {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 900, 600);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -83,7 +90,48 @@ public class CRUDoperationsRicetta {
 			}
 		});
 		menuBar.add(mntmIndietro);
-			frame.getContentPane().setLayout(null);
+		frame.getContentPane().setLayout(null);
+		
+		if(operation == "delRic") {
+			JLabel lblSelezionaBirra = new JLabel("Seleziona Birra");
+			lblSelezionaBirra.setBounds(82, 61, 161, 20);
+			frame.getContentPane().add(lblSelezionaBirra);
+			
+			ArrayList<String> arrayList = new ArrayList<String>();
+			Statement stmt;
+			birraList = new ArrayList<Birra>();
+			try {
+				stmt = connection.createStatement();
+				//seleziono tutte le birre
+				String sql = "SELECT birra.id_birra AS id, birra.nome AS nome FROM birra INNER JOIN birraio ON birra.id_birraio = birraio.id_birraio WHERE birraio.id_birraio = '"+ birraio.getId_birraio() +"'";
+				ResultSet rs = stmt.executeQuery(sql);
+				int i = 0;
+				while(rs.next())
+				{
+					birraList.add(new Birra(rs.getInt("id"), rs.getString("nome"), null, 0));
+					arrayList.add(birraList.get(i).getNome());
+					i++;
+				}
+				rs.close();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			comboBirra = new JComboBox(arrayList.toArray());
+			comboBirra.setBounds(258, 58, 267, 26);
+			frame.getContentPane().add(comboBirra);
+			
+			JButton btneliminandoRicetta = new JButton("Eliminando Ricetta");
+			btneliminandoRicetta.setBounds(581, 57, 267, 29);
+			btneliminandoRicetta.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent e) {
+					int id_birra = birraList.get(comboBirra.getSelectedIndex()).getId_birra();
+					initialize(connection, birraio, id_birra, operation);
+					frame.dispose();
+				}
+			});
+			frame.getContentPane().add(btneliminandoRicetta);
+		}
 		if(operation == "newRic") {
 			JLabel lblNomeIn = new JLabel("Nome Ricetta");
 			lblNomeIn.setBounds(77, 128, 182, 20);
@@ -133,11 +181,50 @@ public class CRUDoperationsRicetta {
 			});
 			frame.getContentPane().add(btnCreaIngrediente);
 		}
+		if(operation == "modRic") {
+			JLabel lblSelezionaBirra = new JLabel("Seleziona Birra");
+			lblSelezionaBirra.setBounds(82, 61, 161, 20);
+			frame.getContentPane().add(lblSelezionaBirra);
 			
-		
+			ArrayList<String> arrayList = new ArrayList<String>();
+			Statement stmt;
+			birraList = new ArrayList<Birra>();
+			try {
+				stmt = connection.createStatement();
+				//seleziono tutte le birre
+				String sql = "SELECT birra.id_birra AS id, birra.nome AS nome FROM birra INNER JOIN birraio ON birra.id_birraio = birraio.id_birraio WHERE birraio.id_birraio = '"+ birraio.getId_birraio() +"'";
+				ResultSet rs = stmt.executeQuery(sql);
+				int i = 0;
+				while(rs.next())
+				{
+					birraList.add(new Birra(rs.getInt("id"), rs.getString("nome"), null, 0));
+					arrayList.add(birraList.get(i).getNome());
+					i++;
+				}
+				rs.close();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			comboBirra = new JComboBox(arrayList.toArray());
+			comboBirra.setBounds(258, 58, 267, 26);
+			frame.getContentPane().add(comboBirra);
+			
+			JButton btnmodificandoRicetta = new JButton("Modificando Ricetta");
+			btnmodificandoRicetta.setBounds(581, 57, 267, 29);
+			btnmodificandoRicetta.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent e) {
+					int id_birra = birraList.get(comboBirra.getSelectedIndex()).getId_birra();
+					initialize(connection, birraio, id_birra, operation);
+					frame.dispose();
+				}
+			});
+			frame.getContentPane().add(btnmodificandoRicetta);
+		}
 	}
+	//funzione di supporto per la creazione di una ricetta
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void initialize(final Connection connection, final Birraio birraio, final String nomeRicetta, final int id_birra) {
+	protected void initialize(final Connection connection, final Birraio birraio, final String nomeRicetta, final int id_birra) {  
 		final JFrame frame1 = new JFrame();
 		frame1.setVisible(true);
 		frame1.setBounds(100, 100, 900, 600);
@@ -252,5 +339,357 @@ public class CRUDoperationsRicetta {
 			}
 		});
 		frame1.getContentPane().add(btnCreaIngrediente);
+	}
+	//funzione di supporto per selezione di una ricetta
+	protected void initialize(final Connection connection, final Birraio birraio,final int id_birra, final String operation) { 
+		final JFrame frame2 = new JFrame();
+		frame2.setVisible(true);
+		frame2.setBounds(100, 100, 900, 600);
+		frame2.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
+		JMenuBar menuBar = new JMenuBar();
+		frame2.setJMenuBar(menuBar);
+		
+		JMenuItem mntmIndietro = new JMenuItem("Indietro");
+		mntmIndietro.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				CRUDoperationsRicetta cRicetta = new CRUDoperationsRicetta(connection, birraio, operation);
+				cRicetta.invokeGUI(connection, birraio, operation);
+				frame2.dispose();
+			}
+		});
+		menuBar.add(mntmIndietro);
+		frame2.getContentPane().setLayout(null);
+		
+		if(operation == "delRic") {
+			ArrayList<String> arrayListRicetta = new ArrayList<String>();
+			ricettaList = new ArrayList<Ricetta>();
+			try {
+				Statement stmt1 = connection.createStatement();
+				//seleziono tutte le birre
+				String sql = "SELECT DISTINCT ricetta.id_ricetta AS id, ricetta.nome AS nome FROM birra INNER JOIN birraio ON birra.id_birraio = birraio.id_birraio INNER JOIN ricetta ON ricetta.id_birra = birra.id_birra WHERE birraio.id_birraio = '"+ birraio.getId_birraio() +"' AND birra.id_birra = '"+birraList.get(comboBirra.getSelectedIndex()).getId_birra()+"'";
+				ResultSet rs = stmt1.executeQuery(sql);
+				int i = 0;
+				while(rs.next())
+				{
+					ricettaList.add(new Ricetta(rs.getInt("id"),0,0,0,rs.getString("nome")));
+					arrayListRicetta.add(ricettaList.get(i).getNome());
+					i++;
+				}
+				rs.close();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			comboRicetta = new JComboBox(arrayListRicetta.toArray());
+			comboRicetta.setBounds(258, 58, 267, 26);
+			frame2.getContentPane().add(comboRicetta);
+			
+			JButton btneliminaRicetta = new JButton("Elimina Ricetta");
+			btneliminaRicetta.setBounds(581, 57, 267, 29);
+			btneliminaRicetta.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent e) {
+					System.out.println("Deleting ricette into db...");
+					
+					Statement stmt1;
+					try {
+						stmt1 = connection.createStatement();
+						String sql = "DELETE FROM ricetta WHERE id_ricetta = '"+ricettaList.get(comboRicetta.getSelectedIndex()).getId_ricetta()+"' AND id_birra = '"+id_birra+"'";
+						stmt1.executeUpdate(sql);
+						CRUDoperationsRicetta cRicetta = new CRUDoperationsRicetta(connection, birraio, "delRic");
+						cRicetta.invokeGUI(connection, birraio, "delRic");
+						frame2.dispose();
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+				}
+			});
+			frame2.getContentPane().add(btneliminaRicetta);
+		}
+		if(operation == "modRic") {
+			ArrayList<String> arrayListRicetta = new ArrayList<String>();
+			ricettaList = new ArrayList<Ricetta>();
+			try {
+				Statement stmt1 = connection.createStatement();
+				//seleziono tutte le ricette
+				String sql = "SELECT DISTINCT ricetta.id_ricetta AS id, ricetta.nome AS nome FROM birra INNER JOIN birraio ON birra.id_birraio = birraio.id_birraio INNER JOIN ricetta ON ricetta.id_birra = birra.id_birra WHERE birraio.id_birraio = '"+ birraio.getId_birraio() +"' AND birra.id_birra = '"+birraList.get(comboBirra.getSelectedIndex()).getId_birra()+"'";
+				ResultSet rs = stmt1.executeQuery(sql);
+				int i = 0;
+				while(rs.next())
+				{
+					ricettaList.add(new Ricetta(rs.getInt("id"),0,0,0,rs.getString("nome")));
+					arrayListRicetta.add(ricettaList.get(i).getNome());
+					i++;
+				}
+				rs.close();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			comboRicetta = new JComboBox(arrayListRicetta.toArray());
+			comboRicetta.setBounds(258, 58, 267, 26);
+			frame2.getContentPane().add(comboRicetta);
+			
+			JButton btnmodificaRicetta = new JButton("Modifica Ricetta");
+			btnmodificaRicetta.setBounds(581, 57, 267, 29);
+			btnmodificaRicetta.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent e) {
+					initialize(connection, birraio, id_birra, ricettaList.get(comboRicetta.getSelectedIndex()).getId_ricetta(), operation);
+					frame2.dispose();
+				}
+			});
+			frame2.getContentPane().add(btnmodificaRicetta);
+		}
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	protected void initialize(final Connection connection, final Birraio birraio,final int id_birra, final int id_ricetta, final String operation) {
+		final JFrame frame3 = new JFrame();
+		frame3.setVisible(true);
+		frame3.setBounds(100, 100, 900, 600);
+		frame3.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
+		JMenuBar menuBar = new JMenuBar();
+		frame3.setJMenuBar(menuBar);
+		
+		JMenuItem mntmIndietro = new JMenuItem("Indietro");
+		mntmIndietro.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				CRUDoperationsRicetta cRicetta = new CRUDoperationsRicetta(connection, birraio, operation);
+				cRicetta.invokeGUI(connection, birraio, operation);
+				frame3.dispose();
+			}
+		});
+		menuBar.add(mntmIndietro);
+		frame3.getContentPane().setLayout(null);
+		
+		JLabel lblQta = new JLabel("Quantità");
+		lblQta.setBounds(77, 128, 182, 20);
+		frame3.getContentPane().add(lblQta);
+
+		txtQta = new JTextField();
+		txtQta.setBounds(305, 125, 267, 26);
+		frame3.getContentPane().add(txtQta);
+		txtQta.setColumns(10);
+		
+		JLabel lblIngrediente = new JLabel("Seleziona Nuovo Ingrediente");
+		lblIngrediente.setBounds(77, 67, 182, 20);
+		frame3.getContentPane().add(lblIngrediente);
+		
+		ArrayList<String> arrayList = new ArrayList<String>();
+		Statement stmt;
+		ingredienteList = new ArrayList<Ingrediente>();
+		try {
+			stmt = connection.createStatement();
+			//prendo tutti gli ingredienti
+			String sql = "SELECT DISTINCT ingrediente.id_ingrediente AS id, ingrediente.nome AS nome FROM dispensa INNER JOIN ingrediente ON ingrediente.id_ingrediente = dispensa.id_ingrediente WHERE dispensa.id_birraio = '"+ birraio.getId_birraio() +"'  AND ingrediente.id_ingrediente != ALL(SELECT id_ingrediente FROM ricetta WHERE id_ricetta = '"+id_ricetta+"' AND id_birra = '"+id_birra+"')";
+			ResultSet rs = stmt.executeQuery(sql);
+			int i = 0;
+			if(!rs.first())
+			{
+				CRUDoperationsRicetta cRicetta = new CRUDoperationsRicetta(connection, birraio, operation);
+				cRicetta.invokeGUI(connection, birraio, operation);
+				frame3.dispose();
+			}else {
+				rs.beforeFirst();
+				while(rs.next())
+				{
+					ingredienteList.add(new Ingrediente(rs.getInt("id"), rs.getString("nome"), null));
+					arrayList.add(ingredienteList.get(i).getNome());
+					i++;
+				}
+				rs.close();
+			}
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		comboIngrediente = new JComboBox(arrayList.toArray());
+		comboIngrediente.setBounds(305, 64, 267, 26);
+		frame3.getContentPane().add(comboIngrediente);
+		//NUOVO
+		JButton btnCreaIngrediente = new JButton("Aggiungi Nuovo Ingrediente");
+		btnCreaIngrediente.setBounds(600, 64, 221, 29);
+		btnCreaIngrediente.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				Statement stmt;
+				try {
+					stmt = connection.createStatement();
+					//verifica che non vengano superate le quanità massime
+					int id_ingr = ingredienteList.get(comboIngrediente.getSelectedIndex()).getId_ingrediente();
+					System.out.println(Double.valueOf(txtQta.getText()));
+					String sql = "SELECT dispensa.qta AS qta FROM dispensa WHERE dispensa.id_ingrediente = '"+ id_ingr +"' AND dispensa.id_birraio = '" + birraio.getId_birraio() + "'";
+					ResultSet rs = stmt.executeQuery(sql);
+
+					if(rs.next())
+					{
+						if(rs.getDouble("qta") < Double.valueOf(txtQta.getText())) {
+							System.out.println("SFORATO LA QUANTITA' MASSIMA!");
+						}
+						else {
+						System.out.println("Insert new ingrediente into db...");
+						//prendo il nome della ricetta
+						sql = "SELECT DISTINCT nome FROM ricetta WHERE id_ricetta = '"+ id_ricetta +"' AND id_birra = '"+id_birra+"'";
+						Statement stmt1 = connection.createStatement();
+						ResultSet rs1 = stmt1.executeQuery(sql);
+						if(rs1.next())
+						{
+							String ricettaNomeString = rs1.getString("nome");
+							sql = "INSERT INTO ricetta (id_ricetta, id_ingrediente, id_birra, quantita, nome)" +
+					                   "VALUES ('"+id_ricetta+"','"+ id_ingr +"','"+id_birra+"','"+Double.valueOf(txtQta.getText())+"','"+ricettaNomeString+"')";
+						}else {
+							
+						}
+						rs1.close();
+						stmt.executeUpdate(sql);
+						}
+					}
+					else {
+						System.out.println("Non vi è nessuna quantità ancora...strano");
+					}
+					rs.close();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				initialize(connection, birraio, id_birra, id_ricetta, operation);
+				frame3.dispose();
+			}
+		});
+		frame3.getContentPane().add(btnCreaIngrediente);
+		
+		JLabel lblOldJLabel = new JLabel("Seleziona Vecchio Ingrediente");
+		lblOldJLabel.setBounds(77, 186, 182, 20);
+		frame3.getContentPane().add(lblOldJLabel);
+		
+		ArrayList<String> oldArrayList = new ArrayList<String>();
+		final ArrayList<Ingrediente>modificaingredienteList = new ArrayList<Ingrediente>();
+		try {
+			stmt = connection.createStatement();
+			//prendo tutti gli ingredienti presenti di quella ricetta
+			String sql = "SELECT DISTINCT ingrediente.id_ingrediente AS id, ingrediente.nome AS nome FROM dispensa INNER JOIN ingrediente ON ingrediente.id_ingrediente = dispensa.id_ingrediente WHERE dispensa.id_birraio = '"+ birraio.getId_birraio() +"'  AND ingrediente.id_ingrediente = ANY(SELECT id_ingrediente FROM ricetta WHERE id_ricetta = '"+id_ricetta+"' AND id_birra = '"+id_birra+"')";
+			ResultSet rs = stmt.executeQuery(sql);
+			int i = 0;
+			if(!rs.first())
+			{
+				CRUDoperationsRicetta cRicetta = new CRUDoperationsRicetta(connection, birraio, operation);
+				cRicetta.invokeGUI(connection, birraio, operation);
+				frame3.dispose();
+			}else {
+				rs.beforeFirst();
+				while(rs.next())
+				{
+					modificaingredienteList.add(new Ingrediente(rs.getInt("id"), rs.getString("nome"), null));
+					oldArrayList.add(modificaingredienteList.get(i).getNome());
+					i++;
+				}
+				rs.close();
+			}
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		final JComboBox comboModificaIngrediente = new JComboBox(oldArrayList.toArray());
+		comboModificaIngrediente.setBounds(305, 186, 267, 26);
+		frame3.getContentPane().add(comboModificaIngrediente);
+		
+		//VECCHIO => MODIFICA
+		JButton btnModificaIngrediente = new JButton("Modifica Vecchio Ingrediente");
+		btnModificaIngrediente.setBounds(600, 128, 221, 29);
+		btnModificaIngrediente.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				Statement stmt;
+				try {
+					stmt = connection.createStatement();
+					//verifica che non vengano superate le quanità massime
+					int id_ingr = modificaingredienteList.get(comboModificaIngrediente.getSelectedIndex()).getId_ingrediente();
+					String sql = "SELECT dispensa.qta AS qta FROM dispensa WHERE dispensa.id_ingrediente = '"+ id_ingr +"' AND dispensa.id_birraio = '" + birraio.getId_birraio() + "'";
+					ResultSet rs = stmt.executeQuery(sql);
+
+					if(rs.next())
+					{
+						if(rs.getDouble("qta") < Double.valueOf(txtQta.getText())) {
+							System.out.println("SFORATO LA QUANTITA' MASSIMA!");
+						}
+						else {
+						System.out.println("Insert modified ingrediente into db...");
+						//prendo il nome della ricetta
+						sql = "SELECT DISTINCT nome FROM ricetta WHERE id_ricetta = '"+ id_ricetta +"' AND id_birra = '"+id_birra+"'";
+						Statement stmt1 = connection.createStatement();
+						ResultSet rs1 = stmt1.executeQuery(sql);
+						if(rs1.next())
+						{
+							String ricettaNomeString = rs1.getString("nome");
+							sql = "UPDATE ricetta SET ricetta.quantita = '"+Double.parseDouble(txtQta.getText())+"' WHERE ricetta.id_ricetta = '"+id_ricetta+"' AND ricetta.id_birra = '"+id_birra+"' AND ricetta.id_ingrediente = '"+id_ingr+"'";
+						}else {
+							
+						}
+						rs1.close();
+						stmt.executeUpdate(sql);
+						}
+					}
+					else {
+						System.out.println("Non vi è nessuna quantità ancora...strano");
+					}
+					rs.close();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				initialize(connection, birraio, id_birra, id_ricetta, operation);
+				frame3.dispose();
+			}
+		});
+		frame3.getContentPane().add(btnModificaIngrediente);
+		
+		//VECCHIO => CANCELLA
+		JButton btnEliminaIngrediente = new JButton("Elimina Vecchio Ingrediente");
+		btnEliminaIngrediente.setBounds(600, 186, 221, 29);
+		btnEliminaIngrediente.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				Statement stmt;
+				try {
+					stmt = connection.createStatement();
+					//verifica che non vengano superate le quanità massime
+					int id_ingr = modificaingredienteList.get(comboModificaIngrediente.getSelectedIndex()).getId_ingrediente();
+					String sql = "SELECT dispensa.qta AS qta FROM dispensa WHERE dispensa.id_ingrediente = '"+ id_ingr +"' AND dispensa.id_birraio = '" + birraio.getId_birraio() + "'";
+					ResultSet rs = stmt.executeQuery(sql);
+
+					if(rs.next())
+					{
+						if(rs.getDouble("qta") < Double.valueOf(txtQta.getText())) {
+							System.out.println("SFORATO LA QUANTITA' MASSIMA!");
+						}
+						else {
+						System.out.println("Insert modified ingrediente into db...");
+						//prendo il nome della ricetta
+						sql = "SELECT DISTINCT nome FROM ricetta WHERE id_ricetta = '"+ id_ricetta +"' AND id_birra = '"+id_birra+"'";
+						Statement stmt1 = connection.createStatement();
+						ResultSet rs1 = stmt1.executeQuery(sql);
+						if(rs1.next())
+						{
+							String ricettaNomeString = rs1.getString("nome");
+							sql = "UPDATE ricetta SET ricetta.quantita = '"+Double.parseDouble(txtQta.getText())+"' WHERE ricetta.id_ricetta = '"+id_ricetta+"' AND ricetta.id_birra = '"+id_birra+"' AND ricetta.id_ingrediente = '"+id_ingr+"'";
+						}else {
+							
+						}
+						rs1.close();
+						stmt.executeUpdate(sql);
+						}
+					}
+					else {
+						System.out.println("Non vi è nessuna quantità ancora...strano");
+					}
+					rs.close();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				initialize(connection, birraio, id_birra, id_ricetta, operation);
+				frame3.dispose();
+			}
+		});
+		frame3.getContentPane().add(btnEliminaIngrediente);
+		
 	}
 }
