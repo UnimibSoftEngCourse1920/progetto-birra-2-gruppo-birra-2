@@ -123,7 +123,7 @@ public class BrewDayMenu {
 		mntmNuovaRicetta.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				CRUDoperations newRic = new CRUDoperations(connection, brewerBirraio, "newRic");
+				CRUDoperationsIngrediente newRic = new CRUDoperationsIngrediente(connection, brewerBirraio, "newRic");
 				newRic.invokeGUI(connection, brewerBirraio, "newRic");
 				frame.dispose();
 			}
@@ -146,7 +146,7 @@ public class BrewDayMenu {
 		mntmVisIngrDisp.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				CRUDoperations showIngr = new CRUDoperations(connection, brewerBirraio, "showIngr");
+				CRUDoperationsIngrediente showIngr = new CRUDoperationsIngrediente(connection, brewerBirraio, "showIngr");
 				showIngr.invokeGUI(connection, brewerBirraio, "showIngr");
 				frame.dispose();
 			}
@@ -157,7 +157,7 @@ public class BrewDayMenu {
 		mntmAggiungiIngrediente.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				CRUDoperations showIngr = new CRUDoperations(connection, brewerBirraio, "addIngr");
+				CRUDoperationsIngrediente showIngr = new CRUDoperationsIngrediente(connection, brewerBirraio, "addIngr");
 				showIngr.invokeGUI(connection, brewerBirraio, "addIngr");
 				frame.dispose();
 			}

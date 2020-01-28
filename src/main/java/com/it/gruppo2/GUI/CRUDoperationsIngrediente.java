@@ -20,7 +20,7 @@ import javax.swing.JComboBox;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 
-public class CRUDoperations {
+public class CRUDoperationsIngrediente {
 
 	private JFrame frame;
 	private JTextField txtNome;
@@ -34,7 +34,7 @@ public class CRUDoperations {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					CRUDoperations window = new CRUDoperations(connection, birraio, operation);
+					CRUDoperationsIngrediente window = new CRUDoperationsIngrediente(connection, birraio, operation);
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -46,7 +46,7 @@ public class CRUDoperations {
 	/**
 	 * Create the application.
 	 */
-	public CRUDoperations(Connection connection, Birraio birraio, String operation) {
+	public CRUDoperationsIngrediente(Connection connection, Birraio birraio, String operation) {
 		try {
 			initialize(connection, birraio, operation);
 		} catch (SQLException e) {
