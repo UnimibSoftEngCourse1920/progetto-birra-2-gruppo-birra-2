@@ -232,7 +232,43 @@ public class BrewDayMenu {
 				frame.dispose();
 			}
 		});
+		
+		JMenuItem mntmEliminaIngrediente = new JMenuItem("Elimina Ingrediente");
+		mntmEliminaIngrediente.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				CRUDoperationsIngrediente showIngr = new CRUDoperationsIngrediente(connection, brewerBirraio, "delIngr");
+				showIngr.invokeGUI(connection, brewerBirraio, "delIngr");
+				frame.dispose();
+			}
+		});
+		mnIngredienti.add(mntmEliminaIngrediente);
 		mnIngredienti.add(mntmAggiungiIngrediente);
+		
+		JMenu mnBirra = new JMenu("Birra");
+		menuBar.add(mnBirra);
+		
+		JMenuItem mntmEliminaBirra = new JMenuItem("Elimina Birra");
+		mntmEliminaBirra.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				CRUDoperationsBirra crudBirra = new CRUDoperationsBirra(connection, brewerBirraio, "delBir");
+				crudBirra.invokeGUI(connection, brewerBirraio, "delBir");
+				frame.dispose();
+			}
+		});
+		mnBirra.add(mntmEliminaBirra);
+		
+		JMenuItem mntmAggiungiBirra = new JMenuItem("Aggiungi Birra");
+		mntmAggiungiBirra.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				CRUDoperationsBirra crudBirra = new CRUDoperationsBirra(connection, brewerBirraio, "aggBir");
+				crudBirra.invokeGUI(connection, brewerBirraio, "aggBir");
+				frame.dispose();
+			}
+		});
+		mnBirra.add(mntmAggiungiBirra);
 		
 		JMenu mnWSIBT = new JMenu("WSIBT");
 		menuBar.add(mnWSIBT);

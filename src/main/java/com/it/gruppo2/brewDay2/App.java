@@ -23,6 +23,4 @@ public class App {
 		Login grapInterf = new Login(connection);
 		grapInterf.invokeGUI(connection);
 	}
-	
-	
 }

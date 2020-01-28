@@ -5,10 +5,13 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
 import com.it.gruppo2.brewDay2.Birraio;
+import com.it.gruppo2.brewDay2.Ingrediente;
+
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import java.awt.event.MouseAdapter;
@@ -78,7 +81,58 @@ public class CRUDoperationsIngrediente {
 		menuBar.add(mntmIndietro);
 		frame.getContentPane().setLayout(null);
 		
-		if(operation == "addIngr") {
+		if(operation.equals("delIngr")) {
+			JLabel lblNome = new JLabel("Nome Ingrediente");
+			lblNome.setBounds(61, 75, 69, 20);
+			frame.getContentPane().add(lblNome);
+			
+			ArrayList<String> arrayListIngrediente = new ArrayList<String>();
+			final ArrayList<Ingrediente> ingredienteList = new ArrayList<Ingrediente>();
+			try {
+				Statement stmt1 = connection.createStatement();
+				//seleziono tutti gli ingredienti
+				String sql = "SELECT ingrediente.id_ingrediente AS id, ingrediente.nome FROM ingrediente INNER JOIN dispensa ON dispensa.id_ingrediente = ingrediente.id_ingrediente WHERE dispensa.id_birraio = '"+birraio.getId_birraio()+"'";
+				ResultSet rs = stmt1.executeQuery(sql);
+				int i = 0;
+				while(rs.next())
+				{
+					ingredienteList.add(new Ingrediente(rs.getInt("id"),rs.getString("nome"), null));
+					arrayListIngrediente.add(ingredienteList.get(i).getNome());
+					i++;
+				}
+				rs.close();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			final JComboBox comboIngrediente = new JComboBox(arrayListIngrediente.toArray());
+			comboIngrediente.setBounds(258, 75, 267, 26);
+			frame.getContentPane().add(comboIngrediente);
+			
+			JButton btnEliminaIngrediente = new JButton("Elimina Ingrediente");
+			btnEliminaIngrediente.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent e) {
+					int id_ingr = ingredienteList.get(comboIngrediente.getSelectedIndex()).getId_ingrediente();
+					try {
+						String sql = "DELETE FROM dispensa WHERE id_ingrediente = '"+id_ingr+"'";
+						Statement stmtStatement = connection.createStatement();
+						stmtStatement.executeUpdate(sql);
+						sql = "DELETE FROM ricetta WHERE id_ingrediente = '"+id_ingr+"'";
+						stmtStatement.executeUpdate(sql);
+						sql = "DELETE FROM ingrediente WHERE id_ingrediente = '"+id_ingr+"'";
+						stmtStatement.executeUpdate(sql);
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+					BrewDayMenu bDayMenu = new BrewDayMenu(connection, birraio);
+					bDayMenu.invokeGUI(connection, birraio);
+					frame.dispose();
+				}
+			});
+			btnEliminaIngrediente.setBounds(543, 75, 115, 29);
+			frame.getContentPane().add(btnEliminaIngrediente);
+		}
+		if(operation.equals("addIngr")) {
 			JLabel lblNomeIngrediente = new JLabel("Nome Ingrediente");
 			lblNomeIngrediente.setBounds(77, 64, 182, 20);
 			frame.getContentPane().add(lblNomeIngrediente);
@@ -147,7 +201,7 @@ public class CRUDoperationsIngrediente {
 			btnCreaIngrediente.setBounds(600, 124, 192, 29);
 			frame.getContentPane().add(btnCreaIngrediente);
 		}
-		if(operation == "showIngr") 
+		if(operation.equals("showIngr")) 
 		{
 			Statement stmt;
 			stmt = connection.createStatement();

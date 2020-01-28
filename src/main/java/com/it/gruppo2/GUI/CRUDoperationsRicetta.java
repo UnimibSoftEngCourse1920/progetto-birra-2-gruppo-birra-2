@@ -92,7 +92,7 @@ public class CRUDoperationsRicetta {
 		menuBar.add(mntmIndietro);
 		frame.getContentPane().setLayout(null);
 		
-		if(operation == "delRic") {
+		if(operation.equals("delRic")) {
 			JLabel lblSelezionaBirra = new JLabel("Seleziona Birra");
 			lblSelezionaBirra.setBounds(82, 61, 161, 20);
 			frame.getContentPane().add(lblSelezionaBirra);
@@ -132,7 +132,7 @@ public class CRUDoperationsRicetta {
 			});
 			frame.getContentPane().add(btneliminandoRicetta);
 		}
-		if(operation == "newRic") {
+		if(operation.equals("newRic")) {
 			JLabel lblNomeIn = new JLabel("Nome Ricetta");
 			lblNomeIn.setBounds(77, 128, 182, 20);
 			frame.getContentPane().add(lblNomeIn);
@@ -181,7 +181,7 @@ public class CRUDoperationsRicetta {
 			});
 			frame.getContentPane().add(btnCreaIngrediente);
 		}
-		if(operation == "modRic") {
+		if(operation.equals("modRic")) {
 			JLabel lblSelezionaBirra = new JLabel("Seleziona Birra");
 			lblSelezionaBirra.setBounds(82, 61, 161, 20);
 			frame.getContentPane().add(lblSelezionaBirra);
@@ -362,7 +362,7 @@ public class CRUDoperationsRicetta {
 		menuBar.add(mntmIndietro);
 		frame2.getContentPane().setLayout(null);
 		
-		if(operation == "delRic") {
+		if(operation.equals("delRic")) {
 			ArrayList<String> arrayListRicetta = new ArrayList<String>();
 			ricettaList = new ArrayList<Ricetta>();
 			try {
@@ -407,7 +407,7 @@ public class CRUDoperationsRicetta {
 			});
 			frame2.getContentPane().add(btneliminaRicetta);
 		}
-		if(operation == "modRic") {
+		if(operation.equals("modRic")) {
 			ArrayList<String> arrayListRicetta = new ArrayList<String>();
 			ricettaList = new ArrayList<Ricetta>();
 			try {
@@ -651,37 +651,9 @@ public class CRUDoperationsRicetta {
 				Statement stmt;
 				try {
 					stmt = connection.createStatement();
-					//verifica che non vengano superate le quanità massime
 					int id_ingr = modificaingredienteList.get(comboModificaIngrediente.getSelectedIndex()).getId_ingrediente();
-					String sql = "SELECT dispensa.qta AS qta FROM dispensa WHERE dispensa.id_ingrediente = '"+ id_ingr +"' AND dispensa.id_birraio = '" + birraio.getId_birraio() + "'";
-					ResultSet rs = stmt.executeQuery(sql);
-
-					if(rs.next())
-					{
-						if(rs.getDouble("qta") < Double.valueOf(txtQta.getText())) {
-							System.out.println("SFORATO LA QUANTITA' MASSIMA!");
-						}
-						else {
-						System.out.println("Insert modified ingrediente into db...");
-						//prendo il nome della ricetta
-						sql = "SELECT DISTINCT nome FROM ricetta WHERE id_ricetta = '"+ id_ricetta +"' AND id_birra = '"+id_birra+"'";
-						Statement stmt1 = connection.createStatement();
-						ResultSet rs1 = stmt1.executeQuery(sql);
-						if(rs1.next())
-						{
-							String ricettaNomeString = rs1.getString("nome");
-							sql = "UPDATE ricetta SET ricetta.quantita = '"+Double.parseDouble(txtQta.getText())+"' WHERE ricetta.id_ricetta = '"+id_ricetta+"' AND ricetta.id_birra = '"+id_birra+"' AND ricetta.id_ingrediente = '"+id_ingr+"'";
-						}else {
-							
-						}
-						rs1.close();
-						stmt.executeUpdate(sql);
-						}
-					}
-					else {
-						System.out.println("Non vi è nessuna quantità ancora...strano");
-					}
-					rs.close();
+					String sql = "DELETE FROM ricetta WHERE id_ingrediente = '"+id_ingr+"' AND id_ricetta = '"+id_ricetta+"'";
+					stmt.executeUpdate(sql);
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
