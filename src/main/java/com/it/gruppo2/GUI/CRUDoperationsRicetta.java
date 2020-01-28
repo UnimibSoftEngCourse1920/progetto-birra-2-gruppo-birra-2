@@ -1,6 +1,6 @@
 package com.it.gruppo2.GUI;
 
-import java.awt.EventQueue; 
+import java.awt.EventQueue;  
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,8 +22,6 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
-import javax.swing.JInternalFrame;
-import javax.swing.JPanel;
 
 public class CRUDoperationsRicetta {
 
