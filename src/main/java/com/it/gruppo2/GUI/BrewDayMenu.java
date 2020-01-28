@@ -97,7 +97,7 @@ public class BrewDayMenu {
 	}
 
 	/**
-	 * Create the application.
+	 * Create the aplication.
 	 */
 	public BrewDayMenu(Connection connection, Birraio brewerBirraio) {
 		try {
