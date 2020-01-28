@@ -81,24 +81,24 @@ public class BrewDayMenu {
 		sql = "SELECT * FROM birra WHERE id_birraio = '" + brewerBirraio.getId_birraio()+ "'";
 		rs = stmt.executeQuery(sql);
 		DefaultListModel<String> nomeList = new DefaultListModel<String>();
-		DefaultListModel<String> tipoList = new DefaultListModel<String>();
+		DefaultListModel<String> noteList = new DefaultListModel<String>();
 		if(rs.next())
 		{
 			for(int i=0; i<max; i++, rs.next()) {
 				//inserisco tutte le birre in una lista
-				birraList.add(i,new Birra(rs.getInt("id_birra"), rs.getString("nome"), rs.getString("tipo"), rs.getInt("id_birraio")));
+				birraList.add(i,new Birra(rs.getInt("id_birra"), rs.getString("nome"), rs.getString("note"), rs.getInt("id_birraio")));
 				nomeList.addElement(birraList.get(i).getNome());
-				tipoList.addElement(birraList.get(i).getTipo());
+				noteList.addElement(birraList.get(i).getNote());
 			}
 		}else {
 			nomeList.addElement("Non esiste alcuna birra!");
-			tipoList.addElement("");
+			noteList.addElement("");
 		}
 		final JList<String> listd = new JList<String>(nomeList);
 		listd.setBounds(64, 32, 200, 200);
 		frame.getContentPane().add(listd);
 		
-		final JList<String> listr = new JList<String>(tipoList);
+		final JList<String> listr = new JList<String>(noteList);
 		listr.setBounds(265, 32, 200, 200);
 		frame.getContentPane().add(listr);
 		
@@ -135,6 +135,9 @@ public class BrewDayMenu {
 		
 		JMenuItem mntmVisualizzaRicetta = new JMenuItem("Visualizza ricetta");
 		mnRicetta.add(mntmVisualizzaRicetta);
+		
+		JMenuItem mntmModificaRicetta = new JMenuItem("Modifica ricetta");
+		mnRicetta.add(mntmModificaRicetta);
 		
 		JMenu mnIngredienti = new JMenu("Ingredienti");
 		menuBar.add(mnIngredienti);

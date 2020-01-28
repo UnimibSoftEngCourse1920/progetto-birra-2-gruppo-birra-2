@@ -2,13 +2,13 @@ package com.it.gruppo2.brewDay2;
 
 public class Birra {
 
-	private String nome, tipo;
+	private String nome, note;
 	private Integer id_birraio, id_birra;
 
-	public Birra(int id_birra, String nome, String tipo, int id_birraio) {
+	public Birra(int id_birra, String nome, String note, int id_birraio) {
 		this.id_birra = id_birra;
 		this.nome = nome;
-		this.tipo = tipo;
+		this.note = note;
 		this.id_birraio = id_birraio;
 	}
 	public String getNome() {
@@ -19,16 +19,16 @@ public class Birra {
 		this.nome = nome;
 	}
 	/**
-	 * @return the tipo
+	 * @return the note
 	 */
-	public String getTipo() {
-		return tipo;
+	public String getNote() {
+		return note;
 	}
 	/**
-	 * @param tipo the tipo to set
+	 * @param note the note to set
 	 */
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
+	public void setnote(String note) {
+		this.note = note;
 	}
 	/**
 	 * @return the id_birraio

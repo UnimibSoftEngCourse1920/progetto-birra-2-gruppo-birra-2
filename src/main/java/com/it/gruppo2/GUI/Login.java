@@ -61,7 +61,7 @@ public class Login {
 		
 		//Label per inserimento user
 		lblNewLabel = new JLabel("User");
-		lblNewLabel.setBounds(127, 74, 46, 14);
+		lblNewLabel.setBounds(79, 74, 94, 14);
 		frame.getContentPane().add(lblNewLabel);
 		
 		//Text field per inserimento user
@@ -72,7 +72,7 @@ public class Login {
 		
 		//Label password
 		lblNewLabel_1 = new JLabel("Password");
-		lblNewLabel_1.setBounds(127, 105, 46, 14);
+		lblNewLabel_1.setBounds(79, 105, 94, 14);
 		frame.getContentPane().add(lblNewLabel_1);
 		
 		final JFormattedTextField passwordField = new JFormattedTextField();
@@ -101,7 +101,7 @@ public class Login {
 				}
 			}
 		});
-		loginButton.setBounds(171, 131, 100, 25);
+		loginButton.setBounds(183, 131, 100, 25);
 		frame.getContentPane().add(loginButton);
 		
 		//button per la sign up
@@ -113,12 +113,12 @@ public class Login {
 				frame.dispose();
 			}
 		});
-		registerButton.setBounds(171, 206, 100, 25);
+		registerButton.setBounds(183, 203, 100, 25);
 		frame.getContentPane().add(registerButton);
 		
 		//Label varie
-		JLabel lblWelcome = new JLabel("BREW DAY 2 - Welcome!");
-		lblWelcome.setBounds(160, 44, 123, 14);
+		JLabel lblWelcome = new JLabel("BREW DAY 2 All GRAIN - Welcome!");
+		lblWelcome.setBounds(79, 43, 261, 14);
 		frame.getContentPane().add(lblWelcome);
 		
 		
