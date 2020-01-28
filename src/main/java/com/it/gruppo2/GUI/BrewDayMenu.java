@@ -67,7 +67,7 @@ public class BrewDayMenu {
 		Statement stmt;
 		stmt = connection.createStatement();
 		
-		//crazione oggetti birra basati sul database
+		//creazione oggetti birra basati sul database
 
 		String sql = "SELECT COUNT(id_birra) AS numBirre FROM birra WHERE id_birraio = '" + brewerBirraio.getId_birraio() + "'";
 		ResultSet rs = stmt.executeQuery(sql);
