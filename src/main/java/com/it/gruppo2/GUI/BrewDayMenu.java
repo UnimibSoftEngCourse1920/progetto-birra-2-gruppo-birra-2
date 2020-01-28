@@ -123,7 +123,7 @@ public class BrewDayMenu {
 		mntmNuovaRicetta.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				CRUDoperationsIngrediente newRic = new CRUDoperationsIngrediente(connection, brewerBirraio, "newRic");
+				CRUDoperationsRicetta newRic = new CRUDoperationsRicetta(connection, brewerBirraio, "newRic");
 				newRic.invokeGUI(connection, brewerBirraio, "newRic");
 				frame.dispose();
 			}
@@ -131,12 +131,36 @@ public class BrewDayMenu {
 		mnRicetta.add(mntmNuovaRicetta);
 		
 		JMenuItem mntmEliminaRicetta = new JMenuItem("Elimina ricetta");
+		mntmEliminaRicetta.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				CRUDoperationsRicetta newRic = new CRUDoperationsRicetta(connection, brewerBirraio, "delRic");
+				newRic.invokeGUI(connection, brewerBirraio, "delRic");
+				frame.dispose();
+			}
+		});
 		mnRicetta.add(mntmEliminaRicetta);
 		
 		JMenuItem mntmVisualizzaRicetta = new JMenuItem("Visualizza ricetta");
+		mntmVisualizzaRicetta.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				CRUDoperationsRicetta newRic = new CRUDoperationsRicetta(connection, brewerBirraio, "visRic");
+				newRic.invokeGUI(connection, brewerBirraio, "visRic");
+				frame.dispose();
+			}
+		});
 		mnRicetta.add(mntmVisualizzaRicetta);
 		
 		JMenuItem mntmModificaRicetta = new JMenuItem("Modifica ricetta");
+		mntmModificaRicetta.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				CRUDoperationsRicetta newRic = new CRUDoperationsRicetta(connection, brewerBirraio, "modRic");
+				newRic.invokeGUI(connection, brewerBirraio, "modRic");
+				frame.dispose();
+			}
+		});
 		mnRicetta.add(mntmModificaRicetta);
 		
 		JMenu mnIngredienti = new JMenu("Ingredienti");

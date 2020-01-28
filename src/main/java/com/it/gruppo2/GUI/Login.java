@@ -66,6 +66,7 @@ public class Login {
 		
 		//Text field per inserimento user
 		final JFormattedTextField userField = new JFormattedTextField();
+		userField.setText("a.russo");
 		userField.setToolTipText("Inserisci username");
 		userField.setBounds(183, 69, 100, 25);
 		frame.getContentPane().add(userField);
@@ -76,6 +77,7 @@ public class Login {
 		frame.getContentPane().add(lblNewLabel_1);
 		
 		final JFormattedTextField passwordField = new JFormattedTextField();
+		passwordField.setText("password");
 		passwordField.setBounds(183, 99, 100, 26);
 		frame.getContentPane().add(passwordField);
 		
