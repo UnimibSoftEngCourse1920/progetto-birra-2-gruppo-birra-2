@@ -14,8 +14,8 @@
 	  <sonar.projectKey>UnimibSoftEngCourse1920_progetto-birra-2-gruppo-birra-2</sonar.projectKey>
 	  <sonar.organization>unimibsoftengcourse1920</sonar.organization>
 	  <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-	  <sonar.login>e39b2040ed1d465fe1b9b2150e2a68e40161a708</sonar.login>
-  </properties>
+	  <sonar.login>dd55ce035b3136b581c5f5b90cad6980a35a57f5</sonar.login>
+  </properties>   
 
   <dependencies>
     <dependency>

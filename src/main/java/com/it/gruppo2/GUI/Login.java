@@ -94,7 +94,7 @@ public class Login {
 					if(rs.next()) {
 						Birraio brewerBirraio = new Birraio(rs.getInt("id_birraio"), rs.getString("nome"), rs.getString("cognome"), rs.getString("username"), rs.getString("password"));
 						BrewDayMenu grapInterf = new BrewDayMenu(connection, brewerBirraio);
-						grapInterf.invokeGUI(connection, brewerBirraio);
+						grapInterf.invokeGUI(connection, brewerBirraio, 1);
 						frame.dispose();
 					}
 					rs.close();

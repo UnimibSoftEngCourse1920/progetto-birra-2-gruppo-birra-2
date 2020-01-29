@@ -8,7 +8,7 @@ public class Ingrediente {
 	public Ingrediente(int id_ingrediente,String nome,String tipo) {
 		this.id_ingrediente = id_ingrediente;
 		this.nome = nome;
-		if(tipo== "luppolo" || tipo == "malto" || tipo == "zucchero" || tipo == "acqua" || tipo == "addittivi" || tipo == "lievito")
+		if(tipo.equals("luppolo") || tipo.equals("malto") || tipo.equals("zucchero") || tipo.equals("acqua") || tipo.equals("addittivi") || tipo.equals("lievito"))
 			this.tipo = tipo;
 	}
 	

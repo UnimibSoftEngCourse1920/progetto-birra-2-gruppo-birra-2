@@ -21,7 +21,6 @@ import javax.swing.JList;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.ListModel;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -59,12 +58,7 @@ public class ListaDellaSpesa {
 		frame.setBounds(100, 100, 820, 457);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
-		
-		
-		
-		
 		Statement stmt;
-		
 		try {
 			stmt = connection.createStatement();
 			String ldsList = new String();
@@ -102,10 +96,9 @@ public class ListaDellaSpesa {
 			    
 				if(code != null)
 				{
-					
+					Statement stmt1;
 					try {
-						String sql="UPDATE dispensa SET lds='N', qta = qta + '"+Double.parseDouble(code)+ "' WHERE  id_ingrediente='" +ingredienteList.get(listd.getSelectedIndex()).getId_ingrediente()+"' AND id_birraio='" + brewerBirraio.getId_birraio()+ "'";
-						Statement stmt1;
+						String sql="UPDATE dispensa SET lds='N', qta = qta + '"+Double.parseDouble(code)+ "' WHERE  id_ingrediente='" +ingredienteList.get(listd.getSelectedIndex()).getId_ingrediente()+"' AND id_birraio='" + brewerBirraio.getId_birraio()+ "'";					
 						stmt1 = connection.createStatement();
 						stmt1.executeUpdate(sql);
 						System.out.println("1");
@@ -114,10 +107,11 @@ public class ListaDellaSpesa {
 						frame.dispose();
 						System.out.println("1");
 					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					
+				}
+				else {
+					JOptionPane.showMessageDialog(frame, "Inserisci un numero");
 				}
 				
 			}
