@@ -25,15 +25,14 @@ import javax.swing.SwingConstants;
 public class BrewDayMenu {
 
 	JFrame frame;
-	private ArrayList<Ricetta> ricettArrayList = new ArrayList<Ricetta>();
-	private ArrayList<Attrezzatura> attrezzaturaArrayList = new ArrayList<Attrezzatura>();
+	private ArrayList<Integer> ricettArrayList = new ArrayList<Integer>();
 	private ArrayList<Birra> birraList = new ArrayList<Birra>();
 	private ArrayList<Ingrediente> ingredienteList = new ArrayList<Ingrediente>();
 	private DefaultListModel<String> ingrList = new DefaultListModel<String>();
 	/**
 	 * Launch the application.
 	 */
-	public void invokeGUI(final Connection connection, final Birraio brewerBirraio) {
+	public void invokeGUI(final Connection connection, final Birraio brewerBirraio, final int login) {
 		
 		try (Statement stmt = connection.createStatement();Statement stmt1 = connection.createStatement()){
 			
@@ -93,9 +92,22 @@ public class BrewDayMenu {
 		
 		
 	}
+	
+	public void invokeGUI(final Connection connection, final Birraio brewerBirraio) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					BrewDayMenu window = new BrewDayMenu(connection, brewerBirraio);
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 
 	/**
-	 * Create the aplication.
+	 * Create the application.
 	 */
 	public BrewDayMenu(Connection connection, Birraio brewerBirraio) {
 		try {
@@ -122,6 +134,7 @@ public class BrewDayMenu {
 		//crazione oggetti birra basati sul database
 
 		String sql = "SELECT COUNT(id_birra) AS numBirre FROM birra WHERE id_birraio = '" + brewerBirraio.getId_birraio() + "'";
+
 		ResultSet rs = stmt.executeQuery(sql);
 		int max=0;
 		if(rs.next()) {
@@ -268,12 +281,6 @@ public class BrewDayMenu {
 		});
 		mnBirra.add(mntmAggiungiBirra);
 		
-		JMenu mnWSIBT = new JMenu("WSIBT");
-		menuBar.add(mnWSIBT);
-		
-		JMenuItem mntmConsigliami = new JMenuItem("Consigliami");
-		mnWSIBT.add(mntmConsigliami);
-		
 		JMenu mnLista = new JMenu("Lista della spesa");
 		menuBar.add(mnLista);
 		
@@ -300,48 +307,54 @@ public class BrewDayMenu {
 				login.invokeGUI(connection);
 				frame.dispose();
 			}
-		});
+		});		
+		JMenu mnWSIBT = new JMenu("WSIBT");
+		menuBar.add(mnWSIBT);
 		
-		mnProfilo.add(mntmLogOut);
+		JMenuItem mntmConsigliami = new JMenuItem("Consigliami");	
 		mntmConsigliami.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try (Statement stmtStatement = connection.createStatement();Statement stmt1 = connection.createStatement();Statement stmt2 = connection.createStatement()){
-					String sql = "SELECT * FROM attrezzatura WHERE id_birraio = '"+brewerBirraio.getId_birraio()+"'";
-					ResultSet rSet = stmtStatement.executeQuery(sql);
-					while(rSet.next()) {
-						attrezzaturaArrayList.add(new Attrezzatura(rSet.getInt("id_attrezzatura"), rSet.getString("nome"), rSet.getInt("capacita"), rSet.getInt("id_birraio")));
-					}
-					rSet.close();
-					//prendo tutte le ricette di quel birraio
-		    		sql = "SELECT DISTINCT ricetta.id_ricetta, ricetta.nome FROM ricetta INNER JOIN birra ON ricetta.id_birra = birra.id_birra INNER JOIN birraio ON birraio.id_birraio = birra.id_birraio WHERE birraio.id_birraio = '"+brewerBirraio.getId_birraio()+"'";
-		    		//inserisco il risultato
-		    		rSet = stmt1.executeQuery(sql);
-		    		while(rSet.next())
-		    		{
-						//prendo tutti gli ingredienti di quella ricetta
-						sql = "SELECT * FROM ingrediente INNER JOIN ricetta ON ingrediente.id_ingrediente = ricetta.id_ingrediente WHERE ricetta.id_ricetta = '"+ rSet.getInt("id_ricetta") +"'";
-			    		ResultSet rs3 = stmt2.executeQuery(sql);
-			    		int j = 0;
-			    		while(rs3.next())
-			    		{	
-			    			//inserisco nella lista delle ricette la ricetta in posizione i
-							ricettArrayList.add(j,new Ricetta(rSet.getInt("id_ricetta"),rs3.getDouble("quantita"),rs3.getInt("id_birra"),rs3.getInt("id_ingrediente"), rSet.getString("nome"), rSet.getInt("quantitaPercentuale")));
-							j++;
-			    		}
-			    		rs3.close();
-		    		}
-		    		rSet.close();
+				try (Statement stmt = connection.createStatement();){
 					
-					WSIBT grapInterf = new WSIBT(connection, brewerBirraio, ricettArrayList, attrezzaturaArrayList);
-					grapInterf.invokeGUI(connection, brewerBirraio, ricettArrayList, attrezzaturaArrayList);
-					frame.dispose();
-				} catch (SQLException e1) {
+		    		//String sql = "SELECT ricetta.* FROM ricetta INNER JOIN birra ON ricetta.id_birra = birra.id_birra WHERE birra.id_birraio = "+brewerBirraio.getId_birraio()+" GROUP BY id_ricetta HAVING COUNT(id_ingrediente) = (SELECT COUNT(id_ingrediente) FROM ricetta where id_ingrediente = ANY(SELECT DISTINCT dispensa.id_ingrediente FROM dispensa WHERE dispensa.qta > 0))";
+					String sql = "SELECT id_ricetta " + 
+							"FROM ricetta INNER JOIN birra ON ricetta.id_birra = birra.id_birra " + 
+							"WHERE birra.id_birraio = '" + brewerBirraio.getId_birraio() +
+							"' GROUP BY id_ricetta " + 
+							"HAVING (id_ricetta,COUNT(id_ingrediente)) = ANY(SELECT id_ricetta,COUNT(id_ingrediente) " + 
+							"FROM ricetta INNER JOIN birra ON birra.id_birra = ricetta.id_birra " + 
+							"where birra.id_birraio = 1 AND id_ingrediente = ANY(SELECT DISTINCT dispensa.id_ingrediente " + 
+							"FROM dispensa " + 
+							"WHERE dispensa.qta > 0) " + 
+							"GROUP BY id_ricetta)";
+					try (ResultSet rSet=stmt.executeQuery(sql);){
+						int j=0;
+			    		while(rSet.next())
+			    		{	
+								ricettArrayList.add(j,rSet.getInt("id_ricetta"));
+								j++;
+			    		}
+			    		rSet.close();
+			    		System.out.println("eeeee");
+						WSIBT grapInterf = new WSIBT(connection, brewerBirraio, ricettArrayList);
+						System.out.println("eeeee");
+						grapInterf.invokeGUI(connection, brewerBirraio, ricettArrayList);
+						System.out.println("eeeee");
+						frame.dispose();
+						System.out.println("eeeee");
+					} catch (Exception e2) {
+						// TODO: handle exception
+					}
+		    		
+		    		} 
+				catch (SQLException e1) {
 					//
 					e1.printStackTrace();
 				}
 				
 			}
 		});
+		mnWSIBT.add(mntmConsigliami);
 		
 	}
 }

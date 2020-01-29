@@ -12,7 +12,6 @@ public class Ingrediente {
 			if(tipo.equals("luppolo") || tipo.equals("malto") || tipo.equals("zucchero") || tipo.equals("acqua") || tipo.equals("addittivi") || tipo.equals("lievito"))
 				this.tipo = tipo;
 		}
-		
 	}
 	
 	public Ingrediente() {

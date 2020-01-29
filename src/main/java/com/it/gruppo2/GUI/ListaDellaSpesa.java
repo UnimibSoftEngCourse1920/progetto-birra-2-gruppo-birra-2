@@ -57,9 +57,7 @@ public class ListaDellaSpesa {
 		frame.setBounds(100, 100, 820, 457);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
-		
 		try (Statement stmt = connection.createStatement();){
-			
 			String sql = "SELECT distinct ingrediente.* FROM dispensa " + 
 					"INNER JOIN ingrediente ON dispensa.id_ingrediente = ingrediente.id_ingrediente " + 
 					"WHERE dispensa.lds = 'Y' " + 
@@ -94,7 +92,8 @@ public class ListaDellaSpesa {
 		JButton btnTogli = new JButton("Togli dalla lista");
 		btnTogli.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(listd.getSelectedValue()!= null) {
+				if(listd.getSelectedValue()!= null) 
+				{
 					String code = JOptionPane.showInputDialog(frame, "Aggiornamento dispensa: hai acquistato altro " +listd.getSelectedValue()+"?", "Update lista della spesa", JOptionPane.INFORMATION_MESSAGE);
 				    
 					if(code != null)
@@ -113,9 +112,29 @@ public class ListaDellaSpesa {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
-						
+						code = JOptionPane.showInputDialog(frame, "Aggiornamento dispensa: hai acquistato altro " +listd.getSelectedValue()+"?", "Update lista della spesa", JOptionPane.INFORMATION_MESSAGE);
+					    
+						if(code != null)
+						{
+							Statement stmt1;
+							try {
+								String sql="UPDATE dispensa SET lds='N', qta = qta + '"+Double.parseDouble(code)+ "' WHERE  id_ingrediente='" +ingredienteList.get(listd.getSelectedIndex()).getId_ingrediente()+"' AND id_birraio='" + brewerBirraio.getId_birraio()+ "'";					
+								stmt1 = connection.createStatement();
+								stmt1.executeUpdate(sql);
+								System.out.println("1");
+								BrewDayMenu bDayMenu = new BrewDayMenu(connection, brewerBirraio);
+								bDayMenu.invokeGUI(connection, brewerBirraio);
+								frame.dispose();
+								System.out.println("1");
+							} catch (SQLException e1) {
+								e1.printStackTrace();
+							}
+						}
+						else {
+							JOptionPane.showMessageDialog(frame, "Inserisci un numero");
+						}
 					}
-				}
+			}
 			}
 		});
 		btnTogli.setBounds(300, 74, 151, 31);
