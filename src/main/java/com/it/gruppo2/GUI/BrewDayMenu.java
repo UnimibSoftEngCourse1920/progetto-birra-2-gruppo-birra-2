@@ -325,7 +325,7 @@ public class BrewDayMenu {
 			    		while(rs3.next())
 			    		{	
 			    			//inserisco nella lista delle ricette la ricetta in posizione i
-							ricettArrayList.add(j,new Ricetta(rSet.getInt("id_ricetta"),rs3.getDouble("quantita"),rs3.getInt("id_birra"),rs3.getInt("id_ingrediente"), rSet.getString("nome")));
+							ricettArrayList.add(j,new Ricetta(rSet.getInt("id_ricetta"),rs3.getDouble("quantita"),rs3.getInt("id_birra"),rs3.getInt("id_ingrediente"), rSet.getString("nome"), rSet.getInt("quantitaPercentuale")));
 							j++;
 			    		}
 			    		rs3.close();

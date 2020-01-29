@@ -3,16 +3,17 @@ package com.it.gruppo2.brewDay2;
 public class Ricetta extends Ingrediente {
 
 	private Double quantita;
-	private Integer id_birra, id_ingrediente, id_ricetta;
+	private Integer id_birra, id_ingrediente, id_ricetta, quantitaPercentuale;
 	private String nome;
 
-	public Ricetta(int id_ricetta, double quantita, int id_birra, int id_ingrediente, String nome) {
+	public Ricetta(int id_ricetta, double quantita, int id_birra, int id_ingrediente, String nome, int quantitaPercentuale) {
 		super();
 		this.quantita = quantita;
 		this.id_birra = id_birra;
 		this.id_ingrediente = id_ingrediente;
 		this.id_ricetta = id_ricetta;
 		this.nome = nome;
+		this.quantitaPercentuale = quantitaPercentuale;
 	}
 	
 	public Double getQuantita() {
@@ -82,6 +83,20 @@ public class Ricetta extends Ingrediente {
 	 */
 	public String getNome() {
 		return nome;
+	}
+
+	/**
+	 * @return the quantitaPercentuale
+	 */
+	public Integer getQuantitaPercentuale() {
+		return quantitaPercentuale;
+	}
+
+	/**
+	 * @param quantitaPercentuale the quantitaPercentuale to set
+	 */
+	public void setQuantitaPercentuale(int quantitaPercentuale) {
+		this.quantitaPercentuale = quantitaPercentuale;
 	}
 	
 	

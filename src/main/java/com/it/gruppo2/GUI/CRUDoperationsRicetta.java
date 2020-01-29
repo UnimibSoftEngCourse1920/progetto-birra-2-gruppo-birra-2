@@ -387,7 +387,7 @@ public class CRUDoperationsRicetta {
 					int i = 0;
 					while(rs.next())
 					{
-						ricettaList.add(new Ricetta(rs.getInt("id"),0,0,0,rs.getString("nome")));
+						ricettaList.add(new Ricetta(rs.getInt("id"),0,0,0,rs.getString("nome"),0));
 						arrayListRicetta.add(ricettaList.get(i).getNome());
 						i++;
 					}
@@ -436,7 +436,7 @@ public class CRUDoperationsRicetta {
 					int i = 0;
 					while(rs.next())
 					{
-						ricettaList.add(new Ricetta(rs.getInt("id"),0,0,0,rs.getString("nome")));
+						ricettaList.add(new Ricetta(rs.getInt("id"),0,0,0,rs.getString("nome"),0));
 						arrayListRicetta.add(ricettaList.get(i).getNome());
 						i++;
 					}

@@ -78,7 +78,7 @@ public class RicetteBirra {
 	    		while(rs3.next())
 	    		{	
 	    			//inserisco nella lista delle ricette la ricetta in posizione i
-					ricettArrayList.add(j,new Ricetta(rs1.getInt("id_ricetta"),rs3.getDouble("quantita"),(int)birra.getId_birra(),rs3.getInt("id_ingrediente"), rs1.getString("nome")));
+					ricettArrayList.add(j,new Ricetta(rs1.getInt("id_ricetta"),rs3.getDouble("quantita"),(int)birra.getId_birra(),rs3.getInt("id_ingrediente"), rs1.getString("nome"), rs1.getInt("quantitaPercentuale")));
 					
     				ingredienteArrayList.add(j,new Ingrediente(rs3.getInt("id_ingrediente"),rs3.getString("nome"),rs3.getString("tipo")));
     				ingredienteListModel.addElement(ingredienteArrayList.get(j).getNome());
