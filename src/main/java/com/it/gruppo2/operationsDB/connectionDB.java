@@ -84,12 +84,18 @@ public class connectionDB {
 			if(getNameDBString() != null) //case where database already exists
 			{
 				Class.forName("com.mysql.jdbc.Driver").newInstance();
-				connection = DriverManager.getConnection(getDbpathString()+getNameDBString(), getUsernameString(), getPwdString()); 
-				if (!connection.isClosed()) {
-					System.out.println("Successfully connected to database..."); 
-					createTables createTables= new createTables(); 
-					createTables.setTables(connection); 
-					}
+				try(Connection connection1 = DriverManager.getConnection(getDbpathString()+getNameDBString(), getUsernameString(), getPwdString())) {
+					
+					 
+					if (!connection1.isClosed()) {
+						System.out.println("Successfully connected to database..."); 
+						createTables createTables= new createTables(); 
+						createTables.setTables(connection1); 
+						}
+				} catch (SQLException e) {
+					e.getStackTrace();
+				}
+				
 			}
 			else {
 				setNameDBString("brewdaydb");

@@ -1,6 +1,5 @@
 package com.it.gruppo2.GUI;
 
-import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -13,11 +12,9 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JScrollPane;
 
 import com.it.gruppo2.brewDay2.Birra;
 import com.it.gruppo2.brewDay2.Birraio;
-import com.it.gruppo2.brewDay2.Ricetta;
 
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -56,6 +53,7 @@ public class CRUDoperationsBirra {
 	/**
 	 * Initialize the contents of the frame.
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void initialize(final Connection connection, final Birraio birraio, String operation) {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 900, 600);
@@ -83,19 +81,21 @@ public class CRUDoperationsBirra {
 			
 			ArrayList<String> arrayListBirra = new ArrayList<String>();
 			final ArrayList<Birra> birraList = new ArrayList<Birra>();
-			try {
-				Statement stmt1 = connection.createStatement();
+			try(Statement stmt1 = connection.createStatement();) {
 				//seleziono tutte le birre
 				String sql = "SELECT id_birra AS id, nome FROM birra WHERE id_birraio = '"+birraio.getId_birraio()+"'";
-				ResultSet rs = stmt1.executeQuery(sql);
-				int i = 0;
-				while(rs.next())
-				{
-					birraList.add(new Birra(rs.getInt("id"),rs.getString("nome"), null, 0));
-					arrayListBirra.add(birraList.get(i).getNome());
-					i++;
+				try(ResultSet rs = stmt1.executeQuery(sql)) {
+					int i = 0;
+					while(rs.next())
+					{
+						birraList.add(new Birra(rs.getInt("id"),rs.getString("nome"), null, 0));
+						arrayListBirra.add(birraList.get(i).getNome());
+						i++;
+					}
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
 				}
-				rs.close();
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
@@ -108,9 +108,8 @@ public class CRUDoperationsBirra {
 				@Override
 				public void mousePressed(MouseEvent e) {
 					int id_birra = birraList.get(comboBirra.getSelectedIndex()).getId_birra();
-					try {
+					try(Statement stmtStatement = connection.createStatement()) {
 						String sql = "DELETE FROM ricetta WHERE id_birra = '"+id_birra+"'";
-						Statement stmtStatement = connection.createStatement();
 						stmtStatement.executeUpdate(sql);
 						sql = "DELETE FROM birra WHERE id_birra = '"+id_birra+"' AND id_birraio = '"+birraio.getId_birraio()+"'";
 						stmtStatement.executeUpdate(sql);
@@ -148,15 +147,18 @@ public class CRUDoperationsBirra {
 			btnCreaBirra.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mousePressed(MouseEvent e) {
-					try {
-						Statement stmtStatement = connection.createStatement();
+					try (Statement stmtStatement = connection.createStatement()){
 						String sql = "SELECT id_birra FROM birra INNER JOIN birraio ON birraio.id_birraio = birra.id_birraio WHERE birraio.id_birraio = '"+birraio.getId_birraio()+"' AND birra.nome = '"+textNome.getText()+"'";
-						ResultSet rSet = stmtStatement.executeQuery(sql);
-						if(rSet.next()) {
-							System.out.println("Esiste già tale birra con questo nome!");
-						}else {
-							sql = "INSERT INTO birra (nome, note, id_birraio) VALUES ('"+textNome.getText()+"','"+txtNote.getText()+"',"+birraio.getId_birraio()+")";
-							stmtStatement.executeUpdate(sql);
+						try(ResultSet rSet = stmtStatement.executeQuery(sql);) {
+							if(rSet.next()) {
+								System.out.println("Esiste già tale birra con questo nome!");
+							}else {
+								sql = "INSERT INTO birra (nome, note, id_birraio) VALUES ('"+textNome.getText()+"','"+txtNote.getText()+"',"+birraio.getId_birraio()+")";
+								stmtStatement.executeUpdate(sql);
+							}
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
 						}
 					} catch (SQLException e1) {
 						e1.printStackTrace();

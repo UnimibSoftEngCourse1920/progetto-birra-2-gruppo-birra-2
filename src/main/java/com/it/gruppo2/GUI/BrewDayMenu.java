@@ -35,15 +35,13 @@ public class BrewDayMenu {
 	 */
 	public void invokeGUI(final Connection connection, final Birraio brewerBirraio) {
 		
-		Statement stmt;
-		try {
-			stmt = connection.createStatement();
+		try (Statement stmt = connection.createStatement();Statement stmt1 = connection.createStatement()){
+			
 			String ldsList = new String();
 			String sql = "SELECT distinct ingrediente.* FROM dispensa " +
 					"INNER JOIN ingrediente ON dispensa.id_ingrediente = ingrediente.id_ingrediente " +
 					"WHERE dispensa.qta < 2 AND dispensa.id_birraio ='" + brewerBirraio.getId_birraio()+ "'";
 			ResultSet rs = stmt.executeQuery(sql);
-			Statement stmt1 = connection.createStatement();
 			if(rs.next())
 			{
 				rs.beforeFirst();
@@ -111,7 +109,7 @@ public class BrewDayMenu {
 	 * Initialize the contents of the frame.
 	 * @throws SQLException 
 	 */
-	private void initialize(final Connection connection, final Birraio brewerBirraio) throws SQLException {
+	private void initialize(final Connection connection, final Birraio brewerBirraio) throws SQLException{
 		frame = new JFrame();
 		frame.setBounds(100, 100, 820, 457);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -307,9 +305,7 @@ public class BrewDayMenu {
 		mnProfilo.add(mntmLogOut);
 		mntmConsigliami.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
-					Statement stmtStatement, stmt1;
-					stmtStatement = connection.createStatement();
+				try (Statement stmtStatement = connection.createStatement();Statement stmt1 = connection.createStatement();Statement stmt2 = connection.createStatement()){
 					String sql = "SELECT * FROM attrezzatura WHERE id_birraio = '"+brewerBirraio.getId_birraio()+"'";
 					ResultSet rSet = stmtStatement.executeQuery(sql);
 					while(rSet.next()) {
@@ -319,10 +315,7 @@ public class BrewDayMenu {
 					//prendo tutte le ricette di quel birraio
 		    		sql = "SELECT DISTINCT ricetta.id_ricetta, ricetta.nome FROM ricetta INNER JOIN birra ON ricetta.id_birra = birra.id_birra INNER JOIN birraio ON birraio.id_birraio = birra.id_birraio WHERE birraio.id_birraio = '"+brewerBirraio.getId_birraio()+"'";
 		    		//inserisco il risultato
-		    		stmt1 = connection.createStatement();
 		    		rSet = stmt1.executeQuery(sql);
-		    		Statement stmt2;
-	    			stmt2 = connection.createStatement();
 		    		while(rSet.next())
 		    		{
 						//prendo tutti gli ingredienti di quella ricetta

@@ -58,10 +58,8 @@ public class RicetteBirra {
 		frame.setBounds(100, 100, 773, 453);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
-		Statement  stmt2, stmt4;
-		try {
-			stmt2 = connection.createStatement();
-			stmt4 = connection.createStatement();
+		try (Statement stmt2 = connection.createStatement();Statement stmt4 = connection.createStatement()){
+			
     		ResultSet rs1,rs3;
     		DefaultListModel<String> ricetteListModel = new DefaultListModel<String>();
     		DefaultListModel<String> ingredienteListModel = new DefaultListModel<String>();

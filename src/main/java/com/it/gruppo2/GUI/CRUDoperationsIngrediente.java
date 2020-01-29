@@ -61,6 +61,7 @@ public class CRUDoperationsIngrediente {
 	 * Initialize the contents of the frame.
 	 * @throws SQLException 
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void initialize(final Connection connection, final Birraio birraio, String operation) throws SQLException {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 900, 600);
