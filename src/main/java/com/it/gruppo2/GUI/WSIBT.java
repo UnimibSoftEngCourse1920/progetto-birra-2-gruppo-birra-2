@@ -124,7 +124,7 @@ public class WSIBT {
 			e1.printStackTrace();
 		}
 		
-		//crazione oggetti birra basati sul database.
+		//crazione oggetti birra basati sul database...
 		final JList<String> listWSITB = new JList<String>(nomiRicetta);
 		listWSITB.setBounds(295, 93, 200, 200);
 		frame.getContentPane().add(listWSITB);
