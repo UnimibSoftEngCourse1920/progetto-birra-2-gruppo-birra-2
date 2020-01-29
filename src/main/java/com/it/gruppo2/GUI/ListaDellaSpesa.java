@@ -1,6 +1,5 @@
 package com.it.gruppo2.GUI;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -21,7 +20,6 @@ import javax.swing.JList;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.ListModel;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -60,32 +58,30 @@ public class ListaDellaSpesa {
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
-		
-		
-		
-		Statement stmt;
-		
-		try {
-			stmt = connection.createStatement();
-			String ldsList = new String();
+		try (Statement stmt = connection.createStatement();){
+			
 			String sql = "SELECT distinct ingrediente.* FROM dispensa " + 
 					"INNER JOIN ingrediente ON dispensa.id_ingrediente = ingrediente.id_ingrediente " + 
 					"WHERE dispensa.lds = 'Y' " + 
 					"AND dispensa.id_birraio = '" + brewerBirraio.getId_birraio()+ "'";
-			ResultSet rs = stmt.executeQuery(sql);
-			
-			if(rs.next())
-			{
-				rs.beforeFirst();
-				int i=0;
-				while(rs.next()==true){
-					//inserisco tutte le birre in una lista
-					ingredienteList.add(i,new Ingrediente(rs.getInt("id_ingrediente"), rs.getString("nome"), rs.getString("tipo")));
-					ingrList1.addElement(ingredienteList.get(i).getNome());
-					i++;
+			try (ResultSet rs = stmt.executeQuery(sql);){
+				if(rs.next())
+				{
+					rs.beforeFirst();
+					int i=0;
+					while(rs.next()==true){
+						//inserisco tutte le birre in una lista
+						ingredienteList.add(i,new Ingrediente(rs.getInt("id_ingrediente"), rs.getString("nome"), rs.getString("tipo")));
+						ingrList1.addElement(ingredienteList.get(i).getNome());
+						i++;
+					}
+					
 				}
-				
+			} catch (Exception e) {
+				// TODO: handle exception
 			}
+			
+			
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -98,28 +94,28 @@ public class ListaDellaSpesa {
 		JButton btnTogli = new JButton("Togli dalla lista");
 		btnTogli.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String code = JOptionPane.showInputDialog(frame, "Aggiornamento dispensa: hai acquistato altro " +listd.getSelectedValue()+"?", "Update lista della spesa", JOptionPane.INFORMATION_MESSAGE);
-			    
-				if(code != null)
-				{
-					
-					try {
-						String sql="UPDATE dispensa SET lds='N', qta = qta + '"+Double.parseDouble(code)+ "' WHERE  id_ingrediente='" +ingredienteList.get(listd.getSelectedIndex()).getId_ingrediente()+"' AND id_birraio='" + brewerBirraio.getId_birraio()+ "'";
-						Statement stmt1;
-						stmt1 = connection.createStatement();
-						stmt1.executeUpdate(sql);
-						System.out.println("1");
-						BrewDayMenu bDayMenu = new BrewDayMenu(connection, brewerBirraio);
-						bDayMenu.invokeGUI(connection, brewerBirraio);
-						frame.dispose();
-						System.out.println("1");
-					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+				if(listd.getSelectedValue()!= null) {
+					String code = JOptionPane.showInputDialog(frame, "Aggiornamento dispensa: hai acquistato altro " +listd.getSelectedValue()+"?", "Update lista della spesa", JOptionPane.INFORMATION_MESSAGE);
+				    
+					if(code != null)
+					{
+						
+						try (Statement stmt1 = connection.createStatement();){
+							String sql="UPDATE dispensa SET lds='N', qta = qta + '"+Double.parseDouble(code)+ "' WHERE  id_ingrediente='" +ingredienteList.get(listd.getSelectedIndex()).getId_ingrediente()+"' AND id_birraio='" + brewerBirraio.getId_birraio()+ "'";
+							
+							stmt1.executeUpdate(sql);
+							System.out.println("1");
+							BrewDayMenu bDayMenu = new BrewDayMenu(connection, brewerBirraio);
+							bDayMenu.invokeGUI(connection, brewerBirraio);
+							frame.dispose();
+							System.out.println("1");
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						
 					}
-					
 				}
-				
 			}
 		});
 		btnTogli.setBounds(300, 74, 151, 31);

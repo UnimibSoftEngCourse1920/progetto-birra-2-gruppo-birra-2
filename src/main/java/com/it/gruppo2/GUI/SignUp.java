@@ -105,7 +105,6 @@ public class SignUp {
 		JButton btnSignUp = new JButton("Sign up");
 		btnSignUp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
 				String nome = fieldNome.getText();
 				String cognome = fieldCognome.getText();
 				String username = fieldUsername.getText();
@@ -120,30 +119,34 @@ public class SignUp {
 					if(!password.equals(confpass)) 					//FUNZIONA MA NON SO PERCHE DA RIVEDERE
 						JOptionPane.showMessageDialog(null, "Le password non coincidono");
 					else {
-						Statement stmt;
-						try {
-							stmt = connection.createStatement();
+						try (Statement stmt = connection.createStatement()){
 							System.out.println("Checking existing brewer...");
 							String sql = "SELECT id_birraio FROM birraio WHERE username = '" + username+ "'";
-							ResultSet rs = stmt.executeQuery(sql);
-							if(rs.next()) {
-								JDialog d = new JDialog(frame, username + " già registrato!", true);
-							    d.setLocationRelativeTo(frame);
-							    d.setVisible(true);
-							}else {
-								System.out.println("Insert new brewer into db...");
-								sql = "INSERT INTO birraio (nome, cognome, username, password)" +
-						                   "VALUES ('"+nome+"','"+cognome+"','"+username+"','"+password+"')";
-								stmt.executeUpdate(sql);
-								sql = "SELECT id_birraio FROM birraio WHERE username = '" + username+ "'";
-								rs = stmt.executeQuery(sql);
-								rs.next();
-								Birraio brewerBirraio = new Birraio(rs.getInt("id_birraio"), nome, cognome, username, password);
-								BrewDayMenu grapInterf = new BrewDayMenu(connection, brewerBirraio);
-								grapInterf.invokeGUI(connection, brewerBirraio);
-								frame.dispose();
+							try (ResultSet rs = stmt.executeQuery(sql)){
+								if(rs.next()) {
+									JDialog d = new JDialog(frame, username + " già registrato!", true);
+								    d.setLocationRelativeTo(frame);
+								    d.setVisible(true);
+								}else {
+									System.out.println("Insert new brewer into db...");
+									sql = "INSERT INTO birraio (nome, cognome, username, password)" +
+							                   "VALUES ('"+nome+"','"+cognome+"','"+username+"','"+password+"')";
+									stmt.executeUpdate(sql);
+									sql = "SELECT id_birraio FROM birraio WHERE username = '" + username+ "'";
+									try (ResultSet rs1 = stmt.executeQuery(sql);){
+										rs1.next();
+										Birraio brewerBirraio = new Birraio(rs1.getInt("id_birraio"), nome, cognome, username, password);
+										BrewDayMenu grapInterf = new BrewDayMenu(connection, brewerBirraio);
+										grapInterf.invokeGUI(connection, brewerBirraio);
+										frame.dispose();
+									} catch (Exception e2) {
+										// TODO: handle exception
+									}
+								}
+							} catch (Exception e2) {
+								// TODO: handle exception
 							}
-							rs.close();
+							
 						} catch (SQLException e1) {
 							e1.printStackTrace();
 						}

@@ -89,19 +89,23 @@ public class CRUDoperationsIngrediente {
 			
 			ArrayList<String> arrayListIngrediente = new ArrayList<String>();
 			final ArrayList<Ingrediente> ingredienteList = new ArrayList<Ingrediente>();
-			try {
-				Statement stmt1 = connection.createStatement();
+			try (Statement stmt1 = connection.createStatement();){
+				
 				//seleziono tutti gli ingredienti
 				String sql = "SELECT ingrediente.id_ingrediente AS id, ingrediente.nome FROM ingrediente INNER JOIN dispensa ON dispensa.id_ingrediente = ingrediente.id_ingrediente WHERE dispensa.id_birraio = '"+birraio.getId_birraio()+"'";
-				ResultSet rs = stmt1.executeQuery(sql);
-				int i = 0;
-				while(rs.next())
-				{
-					ingredienteList.add(new Ingrediente(rs.getInt("id"),rs.getString("nome"), null));
-					arrayListIngrediente.add(ingredienteList.get(i).getNome());
-					i++;
+				try (ResultSet rs = stmt1.executeQuery(sql);){
+					int i = 0;
+					while(rs.next())
+					{
+						ingredienteList.add(new Ingrediente(rs.getInt("id"),rs.getString("nome"), null));
+						arrayListIngrediente.add(ingredienteList.get(i).getNome());
+						i++;
+					}
+					rs.close();
+				} catch (Exception e) {
+					// TODO: handle exception
 				}
-				rs.close();
+				
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
@@ -114,9 +118,9 @@ public class CRUDoperationsIngrediente {
 				@Override
 				public void mousePressed(MouseEvent e) {
 					int id_ingr = ingredienteList.get(comboIngrediente.getSelectedIndex()).getId_ingrediente();
-					try {
+					try (Statement stmtStatement = connection.createStatement();){
 						String sql = "DELETE FROM dispensa WHERE id_ingrediente = '"+id_ingr+"'";
-						Statement stmtStatement = connection.createStatement();
+						
 						stmtStatement.executeUpdate(sql);
 						sql = "DELETE FROM ricetta WHERE id_ingrediente = '"+id_ingr+"'";
 						stmtStatement.executeUpdate(sql);
@@ -166,34 +170,38 @@ public class CRUDoperationsIngrediente {
 			btnCreaIngrediente.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mousePressed(MouseEvent e) {
-					Statement stmt;
-					try {
-						stmt = connection.createStatement();
+					try (Statement stmt = connection.createStatement();){
+						
 						//verifica che non esista un altro ingrediente uguale
 						String sql = "SELECT ingrediente.nome AS nome FROM dispensa INNER JOIN ingrediente ON ingrediente.id_ingrediente = dispensa.id_ingrediente WHERE ingrediente.nome = '"+ txtNome.getText() +"' AND ingrediente.tipo = '"+ comboBox.getSelectedItem() +"' AND dispensa.id_birraio = '" + birraio.getId_birraio() + "'";
-						ResultSet rs = stmt.executeQuery(sql);
-
-						if(rs.next())
-						{
-							System.out.println("ERROR: ALREADY EXISTS!");	
+						try (ResultSet rs = stmt.executeQuery(sql);){
+							if(rs.next())
+							{
+								System.out.println("ERROR: ALREADY EXISTS!");	
+							}
+							else {
+								System.out.println("Insert new ingrediente into db...");
+								sql = "INSERT INTO ingrediente (nome,tipo)" +
+						                   "VALUES ('"+txtNome.getText()+"','"+comboBox.getSelectedItem()+"')";
+								stmt.executeUpdate(sql);
+								sql = "SELECT MAX(ingrediente.id_ingrediente) AS id FROM ingrediente";
+								try (ResultSet rs1 = stmt.executeQuery(sql);){
+									rs1.next();
+									System.out.println("Insert quantity into db...");
+									sql = "INSERT INTO dispensa (qta, id_ingrediente, id_birraio)" +
+							                   "VALUES ('"+txtQta.getText()+"','"+rs1.getInt("id")+"','"+birraio.getId_birraio()+"')";
+									stmt.executeUpdate(sql);
+									BrewDayMenu bDayMenu = new BrewDayMenu(connection, birraio);
+									bDayMenu.invokeGUI(connection, birraio);
+									frame.dispose();
+								} catch (Exception e2) {
+									// TODO: handle exception
+								}
+							}
+							rs.close();
+						} catch (Exception e2) {
+							// TODO: handle exception
 						}
-						else {
-							System.out.println("Insert new ingrediente into db...");
-							sql = "INSERT INTO ingrediente (nome,tipo)" +
-					                   "VALUES ('"+txtNome.getText()+"','"+comboBox.getSelectedItem()+"')";
-							stmt.executeUpdate(sql);
-							sql = "SELECT MAX(ingrediente.id_ingrediente) AS id FROM ingrediente";
-							rs = stmt.executeQuery(sql);
-							rs.next();
-							System.out.println("Insert quantity into db...");
-							sql = "INSERT INTO dispensa (qta, id_ingrediente, id_birraio)" +
-					                   "VALUES ('"+txtQta.getText()+"','"+rs.getInt("id")+"','"+birraio.getId_birraio()+"')";
-							stmt.executeUpdate(sql);
-							BrewDayMenu bDayMenu = new BrewDayMenu(connection, birraio);
-							bDayMenu.invokeGUI(connection, birraio);
-							frame.dispose();
-						}
-						rs.close();
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}
@@ -204,30 +212,31 @@ public class CRUDoperationsIngrediente {
 		}
 		if(operation.equals("showIngr")) 
 		{
-			Statement stmt;
-			stmt = connection.createStatement();
-			
-			//visualizza ingredienti basati sul birraio
-	
-			String sql = "SELECT ingrediente.nome AS nome, dispensa.qta AS qta FROM dispensa INNER JOIN ingrediente ON ingrediente.id_ingrediente = dispensa.id_ingrediente WHERE dispensa.id_birraio = '" + birraio.getId_birraio() + "'";
-			ResultSet rs = stmt.executeQuery(sql);
-			
-			DefaultListModel<String> nomeList = new DefaultListModel<String>();
-			DefaultListModel<Double> qtaList = new DefaultListModel<Double>();
-			while(rs.next())
-			{
-					nomeList.addElement(rs.getString("nome"));
-					qtaList.addElement(rs.getDouble("qta"));
+			try (Statement stmt = connection.createStatement();){
+				String sql = "SELECT ingrediente.nome AS nome, dispensa.qta AS qta FROM dispensa INNER JOIN ingrediente ON ingrediente.id_ingrediente = dispensa.id_ingrediente WHERE dispensa.id_birraio = '" + birraio.getId_birraio() + "'";
+				try (ResultSet rs = stmt.executeQuery(sql);){
+					DefaultListModel<String> nomeList = new DefaultListModel<String>();
+					DefaultListModel<Double> qtaList = new DefaultListModel<Double>();
+					while(rs.next())
+					{
+							nomeList.addElement(rs.getString("nome"));
+							qtaList.addElement(rs.getDouble("qta"));
+					}
+					
+					JList<String> listIngrName = new JList<String>(nomeList);
+					listIngrName.setBounds(49, 16, 200, 311);
+					frame.getContentPane().add(listIngrName);
+					
+					JList<Double> listCapienza = new JList<Double>(qtaList);
+					listCapienza.setBounds(295, 16, 200, 311);
+					frame.getContentPane().add(listCapienza);
+					rs.close();
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
 			}
-			
-			JList<String> listIngrName = new JList<String>(nomeList);
-			listIngrName.setBounds(49, 16, 200, 311);
-			frame.getContentPane().add(listIngrName);
-			
-			JList<Double> listCapienza = new JList<Double>(qtaList);
-			listCapienza.setBounds(295, 16, 200, 311);
-			frame.getContentPane().add(listCapienza);
-			rs.close();
 		}
 	}
 }

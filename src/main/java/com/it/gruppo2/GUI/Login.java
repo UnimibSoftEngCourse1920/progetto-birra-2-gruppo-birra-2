@@ -85,19 +85,22 @@ public class Login {
 		loginButton = new JButton("Login");
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent loginButton) {
-				Statement stmt;
-				try {
-					stmt = connection.createStatement();
+				try (Statement stmt = connection.createStatement();){
+					
 					System.out.println("Checking existing brewer...");
 					String sql = "SELECT * FROM birraio WHERE username = '" + userField.getText() + "' AND password = '" + passwordField.getText() +"'";
-					ResultSet rs = stmt.executeQuery(sql);
-					if(rs.next()) {
-						Birraio brewerBirraio = new Birraio(rs.getInt("id_birraio"), rs.getString("nome"), rs.getString("cognome"), rs.getString("username"), rs.getString("password"));
-						BrewDayMenu grapInterf = new BrewDayMenu(connection, brewerBirraio);
-						grapInterf.invokeGUI(connection, brewerBirraio);
-						frame.dispose();
+					try (ResultSet rs = stmt.executeQuery(sql);){
+						if(rs.next()) {
+							Birraio brewerBirraio = new Birraio(rs.getInt("id_birraio"), rs.getString("nome"), rs.getString("cognome"), rs.getString("username"), rs.getString("password"));
+							BrewDayMenu grapInterf = new BrewDayMenu(connection, brewerBirraio);
+							grapInterf.invokeGUI(connection, brewerBirraio);
+							frame.dispose();
+						}
+						rs.close();
+					} catch (Exception e) {
+						// TODO: handle exception
 					}
-					rs.close();
+					
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}

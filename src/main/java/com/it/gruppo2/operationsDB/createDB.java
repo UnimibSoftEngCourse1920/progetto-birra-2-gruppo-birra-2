@@ -17,11 +17,12 @@ public class createDB {
 	
 	public String setDB(Connection connection) throws SQLException {
 		setNameDBString();
-		Statement stmt = connection.createStatement();
-		System.out.println("Creating database...");
-		String sql = "CREATE DATABASE " + getNameDBString();
-		stmt.executeUpdate(sql);
-		System.out.println("Database created successfully..."); 
-		return getNameDBString();
+		try (Statement stmt = connection.createStatement();){
+			System.out.println("Creating database...");
+			String sql = "CREATE DATABASE " + getNameDBString();
+			stmt.executeUpdate(sql);
+			System.out.println("Database created successfully..."); 
+			return getNameDBString();
+		}
 	}
 }

@@ -45,7 +45,7 @@ public class connectionDB {
 	public void setDBCredential() throws IOException {
 
 //		Mock to deleted and uncommented previous lines
-		setDbpathString("jdbc:mysql://localhost:3306/");//delete autobrewday
+		setDbpathString("jdbc:mysql://localhost:3306/");//delete brewdaydb
 		setUsernameString("root");
 		setPwdString("");
 	}
@@ -86,12 +86,12 @@ public class connectionDB {
 				Class.forName("com.mysql.jdbc.Driver").newInstance();
 				try(Connection connection1 = DriverManager.getConnection(getDbpathString()+getNameDBString(), getUsernameString(), getPwdString())) {
 					
-					 
 					if (!connection1.isClosed()) {
 						System.out.println("Successfully connected to database..."); 
 						createTables createTables= new createTables(); 
 						createTables.setTables(connection1); 
 						}
+					return connection1;
 				} catch (SQLException e) {
 					e.getStackTrace();
 				}
@@ -103,6 +103,7 @@ public class connectionDB {
 				connection = DriverManager.getConnection(getDbpathString()+getNameDBString(), getUsernameString(), getPwdString()); 
 				if (!connection.isClosed())
 					System.out.println("Successfully connected to database...");
+				return connection;
 			}
 		} catch (Exception e) {
 			System.err.println("Excpetion: " + e.getMessage());
