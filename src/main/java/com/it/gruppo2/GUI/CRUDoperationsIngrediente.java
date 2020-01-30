@@ -188,8 +188,15 @@ public class CRUDoperationsIngrediente {
 								try (ResultSet rs1 = stmt.executeQuery(sql);){
 									rs1.next();
 									System.out.println("Insert quantity into db...");
-									sql = "INSERT INTO dispensa (qta, id_ingrediente, id_birraio)" +
-							                   "VALUES ('"+txtQta.getText()+"','"+rs1.getInt("id")+"','"+birraio.getId_birraio()+"')";
+									
+									if(Double.parseDouble(txtQta.getText()) > 0)
+										sql = "INSERT INTO dispensa (qta, id_ingrediente, id_birraio, lds)" +
+								                   "VALUES ('"+txtQta.getText()+"','"+rs1.getInt("id")+"','"+birraio.getId_birraio()+"','N')";
+									else {
+										sql = "INSERT INTO dispensa (qta, id_ingrediente, id_birraio, lds)" +
+								                   "VALUES ('"+txtQta.getText()+"','"+rs1.getInt("id")+"','"+birraio.getId_birraio()+"','Y')";
+									}
+									
 									stmt.executeUpdate(sql);
 									BrewDayMenu bDayMenu = new BrewDayMenu(connection, birraio);
 									bDayMenu.invokeGUI(connection, birraio);

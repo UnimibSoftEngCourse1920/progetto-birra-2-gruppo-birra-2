@@ -55,7 +55,7 @@ public class RicetteBirra {
 	 */
 	private void initialize(final Connection connection,final Birra birra, final Birraio brewerBirraio) {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 773, 453);
+		frame.setBounds(100, 100, 899, 453);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		try (Statement stmt2 = connection.createStatement();Statement stmt4 = connection.createStatement()){
@@ -64,6 +64,7 @@ public class RicetteBirra {
     		DefaultListModel<String> ricetteListModel = new DefaultListModel<String>();
     		DefaultListModel<String> ingredienteListModel = new DefaultListModel<String>();
     		DefaultListModel<String> weightListModel = new DefaultListModel<String>();
+    		DefaultListModel<String> percentualeListModel = new DefaultListModel<String>();
             
     		//prendo tutte le ricette di quella birra
     		String sql = "SELECT DISTINCT id_ricetta, nome FROM ricetta WHERE id_birra = '" + (int)birra.getId_birra()+ "'";
@@ -78,36 +79,43 @@ public class RicetteBirra {
 	    		while(rs3.next())
 	    		{	
 	    			//inserisco nella lista delle ricette la ricetta in posizione i
-					ricettArrayList.add(j,new Ricetta(rs1.getInt("id_ricetta"),rs3.getDouble("quantita"),(int)birra.getId_birra(),rs3.getInt("id_ingrediente"), rs1.getString("nome"), rs1.getInt("quantitaPercentuale")));
+					ricettArrayList.add(j,new Ricetta(rs1.getInt("id_ricetta"),rs3.getDouble("quantita"),(int)birra.getId_birra(),rs3.getInt("id_ingrediente"), rs1.getString("nome"), rs3.getDouble("quantitaPercentuale")));
 					
     				ingredienteArrayList.add(j,new Ingrediente(rs3.getInt("id_ingrediente"),rs3.getString("nome"),rs3.getString("tipo")));
     				ingredienteListModel.addElement(ingredienteArrayList.get(j).getNome());
     				
     				weightListModel.addElement(ricettArrayList.get(j).getQuantita().toString());
-    				
+    				percentualeListModel.addElement(ricettArrayList.get(j).getQuantitaPercentuale().toString());
     				j++;
 	    		}
 	    		ricetteListModel.addElement(rs1.getString("nome"));
-	    		ingredienteListModel.addElement("fine ingredienti ricetta "+ rs1.getString("nome"));
-	    		weightListModel.addElement("fine pesi ingredienti della ricetta "+ rs1.getString("nome"));
+	    		ingredienteListModel.addElement("fine ingredienti di "+ rs1.getString("nome"));
+	    		weightListModel.addElement("fine pesi di "+ rs1.getString("nome"));
+	    		percentualeListModel.addElement("fine percentuali di "+ rs1.getString("nome"));
+	    		
 	    		rs3.close();
     		}
     		rs1.close();
     		frame.getContentPane().setLayout(null);
     		JList<String> listRicette = new JList<String>(ricetteListModel);
     		listRicette.setValueIsAdjusting(true);
-    		listRicette.setBounds(32, 100, 200, 200);
+    		listRicette.setBounds(15, 100, 200, 200);
     		frame.getContentPane().add(listRicette);
     		
     		JList<String> listIngrediente = new JList<String>(ingredienteListModel);
     		listIngrediente.setValueIsAdjusting(true);
-    		listIngrediente.setBounds(290, 100, 200, 200);
+    		listIngrediente.setBounds(230, 100, 200, 200);
     		frame.getContentPane().add(listIngrediente);
     		
 			JList<String> listWeight = new JList<String>(weightListModel);
     		listWeight.setValueIsAdjusting(true);
-    		listWeight.setBounds(536, 100, 200, 200);
+    		listWeight.setBounds(445, 100, 200, 200);
     		frame.getContentPane().add(listWeight);
+    		
+    		JList<String> listPercentuali = new JList<String>(percentualeListModel);
+    		listPercentuali.setValueIsAdjusting(true);
+    		listPercentuali.setBounds(660, 100, 200, 200);
+    		frame.getContentPane().add(listPercentuali);
     		
     		JMenuBar menuBar = new JMenuBar();
     		menuBar.setBounds(0, 0, 751, 31);

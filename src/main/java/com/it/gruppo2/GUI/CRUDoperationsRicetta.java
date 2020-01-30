@@ -244,6 +244,42 @@ public class CRUDoperationsRicetta {
 		mntmIndietro.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				try (Statement stmt = connection.createStatement();){
+					//prendo tutti gli ingredienti e le loro quantita inserite in kg
+					String sql = "SELECT ricetta.id_ingrediente AS id_ingrediente, ricetta.quantita AS qta, ricetta.id_ricetta AS id_ricetta FROM ricetta WHERE ricetta.id_birra = "+ id_birra +"  AND ricetta.nome = '"+nomeRicetta+"'";
+					try (ResultSet rs = stmt.executeQuery(sql);){
+						if(!rs.next())
+						{
+							System.out.print("Nessun ingrediente inserito");
+						}else 
+						{
+							ArrayList<Ricetta> ricettas = new ArrayList<Ricetta>();
+							rs.beforeFirst();
+							double quantitaTot = 0;
+							while(rs.next()) {
+								ricettas.add(new Ricetta(rs.getInt("id_ricetta"), rs.getDouble("qta"), id_birra, rs.getInt("id_ingrediente"), nomeRicetta,0));
+								quantitaTot += rs.getDouble("qta");
+							}
+							int i=0;
+							while (i<ricettas.size()) {
+								ricettas.get(i).setQuantitaPercentuale((ricettas.get(i).getQuantita()*100)/quantitaTot);
+								i++;
+							}
+							i=0;
+							while (i<ricettas.size()) {
+								Statement stmt1 = connection.createStatement();
+								sql = "UPDATE ricetta SET id_ricetta = "+ricettas.get(i).getId_ricetta()+",id_ingrediente = "+ricettas.get(i).getId_ingrediente()+",id_birra = "+ricettas.get(i).getId_birra()+",quantita = "+ricettas.get(i).getQuantita()+",nome = '"+ricettas.get(i).getNome()+"', quantitaPercentuale = "+ricettas.get(i).getQuantitaPercentuale()+" WHERE ricetta.id_ricetta = "+ricettas.get(i).getId_ricetta()+" AND ricetta.id_birra = "+id_birra+" AND ricetta.id_ingrediente = "+ricettas.get(i).getId_ingrediente();
+								stmt1.executeUpdate(sql);
+								i++;
+							}
+							
+						}
+					} catch (Exception e1) {
+						// TODO: handle exception
+					}
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
 				CRUDoperationsRicetta cRicetta = new CRUDoperationsRicetta(connection, birraio, "newRic");
 				cRicetta.invokeGUI(connection, birraio, "newRic");
 				frame1.dispose();
@@ -252,7 +288,7 @@ public class CRUDoperationsRicetta {
 		menuBar.add(mntmIndietro);
 		frame1.getContentPane().setLayout(null);
 		
-		JLabel lblQta = new JLabel("Quantità");
+		JLabel lblQta = new JLabel("Quantità in Kg");
 		lblQta.setBounds(77, 128, 182, 20);
 		frame1.getContentPane().add(lblQta);
 		System.out.print(nomeRicetta);
@@ -269,13 +305,47 @@ public class CRUDoperationsRicetta {
 		ArrayList<String> arrayList = new ArrayList<String>();
 		ingredienteList = new ArrayList<Ingrediente>();
 		try (Statement stmt = connection.createStatement();){
-			
-			//prendo tutti gli ingredienti
+			//prendo tutti gli ingredienti che non appaertengono alla ricetta
 			String sql = "SELECT ingrediente.id_ingrediente AS id, ingrediente.nome AS nome FROM dispensa INNER JOIN ingrediente ON ingrediente.id_ingrediente = dispensa.id_ingrediente WHERE dispensa.id_birraio = '"+ birraio.getId_birraio() +"'  AND ingrediente.id_ingrediente != ALL(SELECT id_ingrediente FROM ricetta WHERE nome = '"+nomeRicetta+"' AND id_birra = '"+id_birra+"')";
 			try (ResultSet rs = stmt.executeQuery(sql);){
 				int i = 0;
 				if(!rs.first())
 				{
+					try (Statement stmt1 = connection.createStatement();){
+						
+						//prendo tutti gli ingredienti e le loro quantita inserite in kg
+						sql = "SELECT ricetta.id_ingrediente AS id_ingrediente, ricetta.quantita AS qta, ricetta.id_ricetta AS id_ricetta FROM ricetta WHERE ricetta.id_birra = "+ id_birra +"  AND ricetta.nome = '"+nomeRicetta+"'";
+						try (ResultSet rs1 = stmt1.executeQuery(sql);){
+							if(!rs1.first())
+							{
+								System.out.print("Nessun ingrediente inserito");
+							}else 
+							{
+								ArrayList<Ricetta> ricettas = new ArrayList<Ricetta>();
+								rs1.beforeFirst();
+								double quantitaTot = 0;
+								while(rs1.next()) {
+									ricettas.add(new Ricetta(rs1.getInt("id_ricetta"), rs1.getDouble("qta"), id_birra, rs1.getInt("id_ingrediente"), nomeRicetta,0));
+									quantitaTot += rs1.getDouble("qta");
+								}
+								i=0;
+								while (i<ricettas.size()) {
+									ricettas.get(i).setQuantitaPercentuale((ricettas.get(i).getQuantita()*100)/quantitaTot);
+									i++;
+								}
+								i=0;
+								while (i<ricettas.size()) {
+									sql = "UPDATE ricetta SET id_ricetta = "+ricettas.get(i).getId_ricetta()+",id_ingrediente = "+ricettas.get(i).getId_ingrediente()+",id_birra = "+ricettas.get(i).getId_birra()+",quantita = "+ricettas.get(i).getQuantita()+",nome = '"+ricettas.get(i).getNome()+"', quantitaPercentuale = "+ricettas.get(i).getQuantitaPercentuale()+" WHERE ricetta.id_ricetta = "+ricettas.get(i).getId_ricetta()+" AND ricetta.id_birra = "+id_birra+" AND ricetta.id_ingrediente = "+ricettas.get(i).getId_ingrediente();
+									stmt.executeUpdate(sql);
+									i++;
+								}
+							}
+						} catch (Exception e1) {
+							// TODO: handle exception
+						}
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
 					CRUDoperationsRicetta cRicetta = new CRUDoperationsRicetta(connection, birraio, "newRic");
 					cRicetta.invokeGUI(connection, birraio, "newRic");
 					frame1.dispose();
@@ -324,11 +394,11 @@ public class CRUDoperationsRicetta {
 								try (ResultSet rs1 = stmt1.executeQuery(sql);){
 									if(rs1.next())
 									{
-										sql = "INSERT INTO ricetta (id_ricetta, id_ingrediente, id_birra, quantita, nome)" +
-								                   "VALUES ('"+rs1.getInt("id")+"','"+ id_ingr +"','"+id_birra+"','"+Double.valueOf(txtQta.getText())+"','"+nomeRicetta+"')";
+										sql = "INSERT INTO ricetta (id_ricetta, id_ingrediente, id_birra, quantita, nome, quantitaPercentuale)" +
+								                   "VALUES ('"+rs1.getInt("id")+"','"+ id_ingr +"','"+id_birra+"','"+Double.valueOf(txtQta.getText())+"','"+nomeRicetta+"', 0)";
 									}else {
-										sql = "INSERT INTO ricetta (id_ingrediente, id_birra, quantita, nome)" +
-								                   "VALUES ('"+ id_ingr +"','"+id_birra+"','"+Double.valueOf(txtQta.getText())+"','"+nomeRicetta+"')";
+										sql = "INSERT INTO ricetta (id_ingrediente, id_birra, quantita, nome, quantitaPercentuale)" +
+								                   "VALUES ('"+ id_ingr +"','"+id_birra+"','"+Double.valueOf(txtQta.getText())+"','"+nomeRicetta+"', 0)";
 									}
 									rs1.close();
 									stmt.executeUpdate(sql);
@@ -478,8 +548,44 @@ public class CRUDoperationsRicetta {
 		mntmIndietro.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				CRUDoperationsRicetta cRicetta = new CRUDoperationsRicetta(connection, birraio, operation);
-				cRicetta.invokeGUI(connection, birraio, operation);
+				try (Statement stmt = connection.createStatement();){
+					//prendo tutti gli ingredienti e le loro quantita inserite in kg
+					String sql = "SELECT ricetta.id_ingrediente AS id_ingrediente, ricetta.quantita AS qta, ricetta.id_ricetta AS id_ricetta FROM ricetta WHERE ricetta.id_birra = "+ id_birra +"  AND ricetta.nome = '"+nomeRic+"'";
+					try (ResultSet rs = stmt.executeQuery(sql);){
+						if(!rs.next())
+						{
+							System.out.print("Nessun ingrediente inserito");
+						}else 
+						{
+							ArrayList<Ricetta> ricettas = new ArrayList<Ricetta>();
+							rs.beforeFirst();
+							double quantitaTot = 0;
+							while(rs.next()) {
+								ricettas.add(new Ricetta(rs.getInt("id_ricetta"), rs.getDouble("qta"), id_birra, rs.getInt("id_ingrediente"), nomeRic,0));
+								quantitaTot += rs.getDouble("qta");
+							}
+							int i=0;
+							while (i<ricettas.size()) {
+								ricettas.get(i).setQuantitaPercentuale((ricettas.get(i).getQuantita()*100)/quantitaTot);
+								i++;
+							}
+							i=0;
+							while (i<ricettas.size()) {
+								Statement stmt1 = connection.createStatement();
+								sql = "UPDATE ricetta SET id_ricetta = "+ricettas.get(i).getId_ricetta()+",id_ingrediente = "+ricettas.get(i).getId_ingrediente()+",id_birra = "+ricettas.get(i).getId_birra()+",quantita = "+ricettas.get(i).getQuantita()+",nome = '"+ricettas.get(i).getNome()+"', quantitaPercentuale = "+ricettas.get(i).getQuantitaPercentuale()+" WHERE ricetta.id_ricetta = "+ricettas.get(i).getId_ricetta()+" AND ricetta.id_birra = "+id_birra+" AND ricetta.id_ingrediente = "+ricettas.get(i).getId_ingrediente();
+								stmt1.executeUpdate(sql);
+								i++;
+							}
+							
+						}
+					} catch (Exception e1) {
+						// TODO: handle exception
+					}
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				CRUDoperationsRicetta cRicetta = new CRUDoperationsRicetta(connection, birraio, "newRic");
+				cRicetta.invokeGUI(connection, birraio, "newRic");
 				frame3.dispose();
 			}
 		});
@@ -552,8 +658,8 @@ public class CRUDoperationsRicetta {
 								else {
 									System.out.println("Insert new ingrediente into db...");
 									
-									sql = "INSERT INTO ricetta (id_ricetta, id_ingrediente, id_birra, quantita, nome)" +
-				                   "VALUES ('"+id_ricetta+"','"+ id_ingr +"','"+id_birra+"','"+Double.valueOf(txtQta.getText())+"','"+nomeRic+"')";	
+									sql = "INSERT INTO ricetta (id_ricetta, id_ingrediente, id_birra, quantita, nome, quantitaPercentuale)" +
+							                   "VALUES ('"+id_ricetta+"','"+ id_ingr +"','"+id_birra+"','"+Double.valueOf(txtQta.getText())+"','"+nomeRic+"', 0)";
 									stmt1.executeUpdate(sql);
 									
 								}

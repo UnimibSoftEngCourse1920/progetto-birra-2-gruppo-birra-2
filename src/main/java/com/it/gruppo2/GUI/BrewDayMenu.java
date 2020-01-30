@@ -299,15 +299,19 @@ public class BrewDayMenu {
 		JMenu mnProfilo = new JMenu("Profilo");
 		menuBar.add(mnProfilo);
 		
-		JMenuItem mntmLogOut = new JMenuItem("Log out");
-		mntmLogOut.addMouseListener(new MouseAdapter() {
+		JMenuItem mntmLogout = new JMenuItem("Logout");
+		mntmLogout.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent arg0) {
 				Login login = new Login(connection);
 				login.invokeGUI(connection);
 				frame.dispose();
 			}
-		});		
+		});
+		mntmLogout.setHorizontalAlignment(SwingConstants.TRAILING);
+		mnProfilo.add(mntmLogout);
+		
+			
 		JMenu mnWSIBT = new JMenu("WSIBT");
 		menuBar.add(mnWSIBT);
 		
