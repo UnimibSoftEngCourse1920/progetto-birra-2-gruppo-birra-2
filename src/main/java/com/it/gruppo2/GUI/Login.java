@@ -86,7 +86,6 @@ public class Login {
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent loginButton) {
 				try (Statement stmt = connection.createStatement();){
-					
 					System.out.println("Checking existing brewer...");
 					String sql = "SELECT * FROM birraio WHERE username = '" + userField.getText() + "' AND password = '" + passwordField.getText() +"'";
 					try (ResultSet rs = stmt.executeQuery(sql);){

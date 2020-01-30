@@ -2,6 +2,7 @@ package com.it.gruppo2.brewDay2;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import com.it.gruppo2.operationsDB.*;
 

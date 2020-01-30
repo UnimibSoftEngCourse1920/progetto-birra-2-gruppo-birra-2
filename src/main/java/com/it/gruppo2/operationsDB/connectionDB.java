@@ -55,9 +55,12 @@ public class connectionDB {
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance(); 
 			connection = DriverManager.getConnection(getDbpathString(), getUsernameString(), getPwdString()); 
+			//caso in cui il server esiste
 			if (!connection.isClosed()) {
 				System.out.println("Successfully connected to server..."); 
+				//provvedo a creare il DB
 				createDB createDB= new createDB(); 
+				//se non ricevo nulla allora il DB esiste altrimenti setto il nome del DB 
 				setNameDBString(createDB.setDB(connection));
 				}
 		} catch (Exception e) {
@@ -81,29 +84,26 @@ public class connectionDB {
 	public Connection createDBConnection() {
 		Connection connection = null;
 		try {
-			if(getNameDBString() != null) //case where database already exists
+			if(getNameDBString() != null) //case where database not exists
 			{
 				Class.forName("com.mysql.jdbc.Driver").newInstance();
-				try(Connection connection1 = DriverManager.getConnection(getDbpathString()+getNameDBString(), getUsernameString(), getPwdString())) {
-					
-					if (!connection1.isClosed()) {
-						System.out.println("Successfully connected to database..."); 
-						createTables createTables= new createTables(); 
-						createTables.setTables(connection1); 
-						}
-					return connection1;
-				} catch (SQLException e) {
-					e.getStackTrace();
-				}
-				
+				connection = DriverManager.getConnection(getDbpathString()+getNameDBString(), getUsernameString(), getPwdString());
+				if (!connection.isClosed()) {
+					System.out.println("Successfully connected to database..."); 
+					createTables createTables= new createTables(); 
+					createTables.setTables(connection); 
+					return connection;
+					}
 			}
-			else {
+			else //case exists db
+			{
 				setNameDBString("brewdaydb");
 				Class.forName("com.mysql.jdbc.Driver").newInstance();
 				connection = DriverManager.getConnection(getDbpathString()+getNameDBString(), getUsernameString(), getPwdString()); 
-				if (!connection.isClosed())
+				if (!connection.isClosed()) {
 					System.out.println("Successfully connected to database...");
-				return connection;
+					return connection;
+				}	
 			}
 		} catch (Exception e) {
 			System.err.println("Excpetion: " + e.getMessage());
