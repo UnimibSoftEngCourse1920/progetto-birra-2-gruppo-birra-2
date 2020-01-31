@@ -1,6 +1,6 @@
 package com.it.gruppo2.GUI;
 
-import java.awt.EventQueue;
+import java.awt.EventQueue; 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,7 +11,6 @@ import javax.swing.JFrame;
 
 import com.it.gruppo2.brewDay2.Attrezzatura;
 import com.it.gruppo2.brewDay2.Birraio;
-import com.it.gruppo2.brewDay2.Ingrediente;
 
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -22,9 +21,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JTextField;
-import javax.swing.ListModel;
 import javax.swing.JComboBox;
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 

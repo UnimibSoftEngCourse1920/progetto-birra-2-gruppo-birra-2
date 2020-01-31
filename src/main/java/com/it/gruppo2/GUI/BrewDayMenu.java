@@ -39,7 +39,7 @@ public class BrewDayMenu {
 			String ldsList = new String();
 			String sql = "SELECT distinct ingrediente.* FROM dispensa " +
 					"INNER JOIN ingrediente ON dispensa.id_ingrediente = ingrediente.id_ingrediente " +
-					"WHERE dispensa.qta < 2 AND dispensa.id_birraio ='" + brewerBirraio.getId_birraio()+ "'";
+					"WHERE dispensa.qta < 1 AND dispensa.id_birraio ='" + brewerBirraio.getId_birraio()+ "'";
 			ResultSet rs = stmt.executeQuery(sql);
 			if(rs.next())
 			{

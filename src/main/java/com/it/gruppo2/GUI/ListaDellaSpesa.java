@@ -95,19 +95,38 @@ public class ListaDellaSpesa {
 				if(listd.getSelectedValue()!= null) 
 				{
 					String code = JOptionPane.showInputDialog(frame, "Aggiornamento dispensa: Quanto/a " +listd.getSelectedValue()+" hai acquistato?", "Update lista della spesa", JOptionPane.INFORMATION_MESSAGE);
-				    
-					if(!code.isEmpty())
-					{
-						try (Statement stmt1 = connection.createStatement();){
-							String sql="UPDATE dispensa SET lds='N', qta = qta + '"+Double.parseDouble(code)+ "' WHERE  id_ingrediente='" +ingredienteList.get(listd.getSelectedIndex()).getId_ingrediente()+"' AND id_birraio='" + brewerBirraio.getId_birraio()+ "'";
-							stmt1.executeUpdate(sql);
-							BrewDayMenu bDayMenu = new BrewDayMenu(connection, brewerBirraio);
-							bDayMenu.invokeGUI(connection, brewerBirraio);
-							frame.dispose();
-						} catch (SQLException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
+					if(!code.isEmpty() && code != null)
+					{	
+						Double quantitaLitri = 0.0;
+						boolean numeric = true;
+						try {
+							quantitaLitri = Double.parseDouble(code);
+				        } catch (NumberFormatException e1) {
+				            numeric = false;
+				        }
+						if(numeric == true && quantitaLitri > 0) {
+							try (Statement stmt1 = connection.createStatement();){
+								String sql="UPDATE dispensa SET lds='N', qta = qta + '"+Double.parseDouble(code)+ "' WHERE  id_ingrediente='" +ingredienteList.get(listd.getSelectedIndex()).getId_ingrediente()+"' AND id_birraio='" + brewerBirraio.getId_birraio()+ "'";
+								stmt1.executeUpdate(sql);
+								if(ingredienteList.size() > 1) {
+									ListaDellaSpesa listaDellaSpesa = new ListaDellaSpesa(connection, brewerBirraio);
+									listaDellaSpesa.invokeGUI(connection, brewerBirraio);
+									frame.dispose();
+								}else{
+									BrewDayMenu bDayMenu = new BrewDayMenu(connection, brewerBirraio);
+									bDayMenu.invokeGUI(connection, brewerBirraio);
+									frame.dispose();
+								}
+								
+							} catch (SQLException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}else {
+							JOptionPane.showMessageDialog(frame, "Inserire dati accettabili");
 						}
+					}else {
+						JOptionPane.showMessageDialog(frame, "Inserire dati accettabili");
 					}
 				}
 			}

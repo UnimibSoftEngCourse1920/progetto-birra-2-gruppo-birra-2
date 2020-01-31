@@ -144,7 +144,8 @@ public class RicetteBirra {
     					JOptionPane.showMessageDialog(frame, "Non hai selezionato nessuna ricetta");
     				else {
     					
-    					String qtaString = JOptionPane.showInputDialog(frame, "Quanti litri vuoi produrre di birra?", "Inserimento quantità", JOptionPane.INFORMATION_MESSAGE);
+    					String qtaString = JOptionPane.showInputDialog(frame, "Quanti litri vuoi produrre di birra?", "Inserimento quantità");
+    					
     					if(!qtaString.isEmpty() && qtaString != null)
     					{	
     						Double quantitaLitri = 0.0;
@@ -198,6 +199,20 @@ public class RicetteBirra {
         								//faccio il controllo se la ricetta va bene
         								if(quantitaTotFinale<capienzaAttr && conntrolloDispensa == true) {
         									JOptionPane.showMessageDialog(frame, "Procediamo a produrre");
+        									//aggiornare le quantità tutti gli ingredienti di quella ricetta
+        									int h = 0;
+        									while(h<ingrRicettaFinale.size()) {
+        											try (Statement stmt4 = connection.createStatement();){
+        												sql="UPDATE dispensa SET qta = (qta - "+ingrRicettaFinale.get(h).getQuantita()+") WHERE id_ingrediente= "+ingrRicettaFinale.get(h).getId_ingrediente()+" AND id_birraio = "+brewerBirraio.getId_birraio();                 
+        												stmt4.executeUpdate(sql);
+        											} catch (Exception e2) {
+        												// TODO: handle exception
+        											}
+        										h++;
+        									}
+        									BrewDayMenu bDayMenu = new BrewDayMenu(connection, brewerBirraio);
+        									bDayMenu.invokeGUI(connection, brewerBirraio, 1);
+        									frame.dispose();
         								}
 									} catch (Exception e) {
 										// TODO: handle exception
