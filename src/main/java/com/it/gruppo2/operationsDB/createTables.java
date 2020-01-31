@@ -58,7 +58,6 @@ public class createTables {
 			
 			
 			
-			
 			sql = "ALTER TABLE `attrezzatura`\r\n" + 
 					"  ADD PRIMARY KEY (`id_attrezzatura`),\r\n" + 
 					"  ADD KEY `idfk_id_birraio` (`id_birraio`);";
