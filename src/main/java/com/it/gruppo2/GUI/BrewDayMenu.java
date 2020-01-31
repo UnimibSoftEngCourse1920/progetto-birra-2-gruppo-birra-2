@@ -56,7 +56,7 @@ public class BrewDayMenu {
 					i++;
 				}
 				
-				int input = JOptionPane.showOptionDialog(frame, "Ingredienti bassi in dispensa: " +ldsList, "Vuoi aggiungere alla lista della spesa?", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+				int input = JOptionPane.showOptionDialog(frame, "Ingredienti bassi: " +ldsList, "Vuoi aggiungere alla lista della spesa?", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
 				if(input == JOptionPane.YES_OPTION)
 				{
@@ -326,9 +326,9 @@ public class BrewDayMenu {
 							"							WHERE birra.id_birraio = "+brewerBirraio.getId_birraio()+" GROUP BY id_ricetta " + 
 							"							HAVING (id_ricetta,COUNT(id_ingrediente)) = ANY(SELECT id_ricetta,COUNT(id_ingrediente)" + 
 							"							FROM ricetta INNER JOIN birra ON birra.id_birra = ricetta.id_birra " + 
-							"	              			where birra.id_birraio = 1 AND id_ingrediente = ANY(SELECT DISTINCT dispensa.id_ingrediente" + 
+							"	              			where birra.id_birraio = "+brewerBirraio.getId_birraio()+" AND id_ingrediente = ANY(SELECT DISTINCT dispensa.id_ingrediente" + 
 							"							FROM dispensa INNER JOIN ingrediente ON ingrediente.id_ingrediente = dispensa.id_ingrediente INNER JOIN ricetta ON ricetta.id_ingrediente = ingrediente.id_ingrediente" + 
-							"							WHERE dispensa.qta > 0 AND ricetta.quantita<dispensa.qta)" + 
+							"							WHERE dispensa.qta > 0 AND ricetta.quantita<=dispensa.qta)" + 
 							"							GROUP BY id_ricetta)";
 					try (ResultSet rSet=stmt.executeQuery(sql);){
 						int j=0;

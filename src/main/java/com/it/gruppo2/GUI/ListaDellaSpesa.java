@@ -58,16 +58,16 @@ public class ListaDellaSpesa {
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		try (Statement stmt = connection.createStatement();){
-			String sql = "SELECT distinct ingrediente.* FROM dispensa " + 
+			String sql = "SELECT ingrediente.* FROM dispensa " + 
 					"INNER JOIN ingrediente ON dispensa.id_ingrediente = ingrediente.id_ingrediente " + 
-					"WHERE dispensa.lds = 'Y' " + 
-					"AND dispensa.id_birraio = '" + brewerBirraio.getId_birraio()+ "'";
+					"WHERE dispensa.lds = 'Y' OR dispensa.qta < 1 " + 
+					"AND dispensa.id_birraio = " + brewerBirraio.getId_birraio();
 			try (ResultSet rs = stmt.executeQuery(sql);){
 				if(rs.next())
 				{
 					rs.beforeFirst();
 					int i=0;
-					while(rs.next()==true){
+					while(rs.next()){
 						//inserisco tutte le birre in una lista
 						ingredienteList.add(i,new Ingrediente(rs.getInt("id_ingrediente"), rs.getString("nome"), rs.getString("tipo")));
 						ingrList1.addElement(ingredienteList.get(i).getNome());

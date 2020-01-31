@@ -1,6 +1,6 @@
 package com.it.gruppo2.GUI;
 
-import java.awt.EventQueue;  
+import java.awt.EventQueue;   
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -25,7 +25,6 @@ import java.awt.event.ActionEvent;
 import javax.swing.JList;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-
 
 public class WSIBT {
 
@@ -81,7 +80,6 @@ public class WSIBT {
 				capienzaAttr=rs.getInt("capacita");
 			}
 			rs.close();
-			
 			//passo a visionare tutte le ricette che hanno gli ingredienti >0
 			while(f<ricettArrayList.size()) 
 			{
@@ -100,22 +98,49 @@ public class WSIBT {
 				rs1.close();
 				
 				int k=0;
-				quantitaRicettaTot=0;
+				ArrayList<Double> iterazioniTot = new ArrayList<Double>();
+				//vado a visitare tittu gli ingredienti di tutte le ricette per vedere quale sarà la moltiplicazione da fare
 				while(k<ingrRicetta.size())
 				{
+					System.out.println("ciao");
 					stmt2 = connection.createStatement();
-					//seleziono la quantita di quell'ingrediente
 					if(ricettArrayList.get(f) == ingrRicetta.get(k).getId_ricetta()) //seleziono solo gli ingredienti di quella ricetta
 					{
+						//seleziono la quantita di quell'ingrediente in dispensa
 						sql = "SELECT qta FROM dispensa WHERE id_ingrediente="+ingrRicetta.get(k).getId_ingrediente();
 						ResultSet rs2 = stmt2.executeQuery(sql);
-						if(rs2.next() && quantitaRicettaTot<=capienzaAttr){
-							quantitaRicettaTot += (rs2.getDouble("qta")*(ingrRicetta.get(k).getQuantitaPercentuale()/100));
+						if(rs2.next())
+						{
+							double iterazioni = Math.floor(rs2.getDouble("qta")/ingrRicetta.get(k).getQuantita());
+							iterazioniTot.add(iterazioni);
+							System.out.print(iterazioni);
 			    		}
 						rs2.close();
 					}
 					k++;
 				}
+				k=0;Double iterazioneMIN = Double.MAX_VALUE;
+				//prendo l'iterazione minima che posso fare
+				while(k<iterazioniTot.size()) {
+					if(iterazioniTot.get(k)<iterazioneMIN) {
+						iterazioneMIN = iterazioniTot.get(k);
+					}
+					k++;
+				}
+				quantitaRicettaTot=0;
+				k=0;
+				//vado a prendere la quantità tot che verrà prodotta da quella ricetta
+				while(k<ingrRicetta.size())
+				{
+					if(ricettArrayList.get(f) == ingrRicetta.get(k).getId_ricetta()) //seleziono solo gli ingredienti di quella ricetta
+					{
+						if(quantitaRicettaTot<=capienzaAttr){
+							quantitaRicettaTot += (ingrRicetta.get(k).getQuantita()*iterazioneMIN);
+			    		}
+					}
+					k++;
+				}
+				
 				//posso procedere ad inserire la ricetta f
 				if(quantitaRicettaTot<capienzaAttr)
 				{
@@ -124,23 +149,10 @@ public class WSIBT {
 					while(k<ingrRicetta.size()) {
 						if(ricettArrayList.get(f) == ingrRicetta.get(k).getId_ricetta()) //seleziono solo gli ingredienti di quella ricetta
 						{
-							try (Statement stmt6 = connection.createStatement();){
-								//seleziono la quantità di un ingrediente di quella ricetta
-								sql = "SELECT qta FROM dispensa WHERE id_ingrediente = "+ingrRicetta.get(k).getId_ingrediente();
-								try (ResultSet rs6 = stmt6.executeQuery(sql);){
-									if(rs6.next()) {
-										Double quantityDouble = (rs6.getDouble("qta")*(ingrRicetta.get(k).getQuantitaPercentuale()/100));
-										//inserisco l'ingrediente nella lista
-										ingrRicettaFinale.add(z, new Ricetta(ingrRicetta.get(k).getId_ricetta(), quantityDouble, 0,ingrRicetta.get(k).getId_ingrediente(),null,0));
-										z++;
-									}
-								} catch (Exception e) {
-									// TODO: handle exception
-								}
-							} catch (Exception e) {
-								// TODO: handle exception
-							}
-							
+							Double quantityDouble = (ingrRicetta.get(k).getQuantita()*iterazioneMIN);
+							//inserisco l'ingrediente nella lista
+							ingrRicettaFinale.add(z, new Ricetta(ingrRicetta.get(k).getId_ricetta(), quantityDouble, 0,ingrRicetta.get(k).getId_ingrediente(),null,0));
+							z++;			
 						}
 						k++;
 					}

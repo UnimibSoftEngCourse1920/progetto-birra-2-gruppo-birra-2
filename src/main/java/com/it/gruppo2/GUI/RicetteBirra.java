@@ -17,15 +17,18 @@ import com.it.gruppo2.brewDay2.Ingrediente;
 import com.it.gruppo2.brewDay2.Ricetta;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.JButton;
 
 public class RicetteBirra {
 
 	private JFrame frame;
 	private ArrayList<Ricetta> ricettArrayList = new ArrayList<Ricetta>();
 	private ArrayList<Ingrediente> ingredienteArrayList = new ArrayList<Ingrediente>();
-	
+	private int capienzaAttr = 0;
 	
 	/**
 	 * Launch the application.
@@ -97,7 +100,7 @@ public class RicetteBirra {
     		}
     		rs1.close();
     		frame.getContentPane().setLayout(null);
-    		JList<String> listRicette = new JList<String>(ricetteListModel);
+    		final JList<String> listRicette = new JList<String>(ricetteListModel);
     		listRicette.setValueIsAdjusting(true);
     		listRicette.setBounds(15, 100, 200, 200);
     		frame.getContentPane().add(listRicette);
@@ -118,7 +121,7 @@ public class RicetteBirra {
     		frame.getContentPane().add(listPercentuali);
     		
     		JMenuBar menuBar = new JMenuBar();
-    		menuBar.setBounds(0, 0, 751, 31);
+    		menuBar.setBounds(0, 0, 877, 31);
     		frame.getContentPane().add(menuBar);
     		
     		JMenuItem plsBack = new JMenuItem("Indietro");
@@ -131,6 +134,89 @@ public class RicetteBirra {
     			}
     		});
     		menuBar.add(plsBack);
+    		
+    		JButton btnProduciRicetta = new JButton("Produci RIcetta");
+    		btnProduciRicetta.addMouseListener(new MouseAdapter() {
+    			@Override
+    			public void mousePressed(MouseEvent arg0) {
+    				String nomeRicetta = listRicette.getSelectedValue();
+    				if(nomeRicetta == null)
+    					JOptionPane.showMessageDialog(frame, "Non hai selezionato nessuna ricetta");
+    				else {
+    					
+    					String qtaString = JOptionPane.showInputDialog(frame, "Quanti litri vuoi produrre di birra?", "Inserimento quantità", JOptionPane.INFORMATION_MESSAGE);
+    					if(!qtaString.isEmpty() && qtaString != null)
+    					{	
+    						Double quantitaLitri = 0.0;
+    						boolean numeric = true;
+    						try {
+    							quantitaLitri = Double.parseDouble(qtaString);
+    				        } catch (NumberFormatException e) {
+    				            numeric = false;
+    				        }
+    						if(numeric == true && quantitaLitri > 0) {
+        						try (Statement stmtStatement = connection.createStatement()){
+        							//prendo la capacità massima dell'attrazzatura del birraio 
+        							String sql = "SELECT attrezzatura.capacita FROM attrezzatura WHERE disponibilita = 'Y' AND id_birraio= "+brewerBirraio.getId_birraio()+" ORDER BY capacita DESC LIMIT 1";
+        							ResultSet rs = stmtStatement.executeQuery(sql);
+        							if(rs.next()) {
+        								capienzaAttr=rs.getInt("capacita");
+        							}
+        							rs.close();
+        							//vengono selezionati tutti gli ingredienti della ricetta selezioata 
+        							sql = "SELECT * FROM ricetta WHERE nome = '"+nomeRicetta+"' AND id_birra = "+birra.getId_birra();
+        							try (ResultSet rSet = stmtStatement.executeQuery(sql);){
+        								//passo al setaccio tutti gli ingredienti
+										int i = 0;Double quantitaFinale,quantitaTotFinale =0.0;boolean conntrolloDispensa = true;
+										ArrayList<Ricetta> ingrRicettaFinale = new ArrayList<Ricetta>();
+        								while(rSet.next()) {
+        									quantitaFinale = (rSet.getDouble("quantitaPercentuale")/100)*quantitaLitri;
+        									quantitaTotFinale += quantitaFinale;
+        									//preso tutti gli ingredienti che devono essere utlizzati con la qta corretta
+    										ingrRicettaFinale.add(i, new Ricetta(rSet.getInt("id_ricetta"), quantitaFinale, birra.getId_birra(),rSet.getInt("id_ingrediente"),rSet.getString("nome"),0));
+    										sql = "SELECT qta FROM dispensa WHERE id_birraio = "+brewerBirraio.getId_birraio()+" AND lds = 'N' AND id_ingrediente = "+ingrRicettaFinale.get(i).getId_ingrediente();
+        									try (Statement stmt5 = connection.createStatement();){
+        										try (ResultSet resultSet = stmt5.executeQuery(sql)){
+    												if(resultSet.next()) {
+    													if(resultSet.getDouble("qta")<ingrRicettaFinale.get(i).getQuantita())
+    														{
+    														conntrolloDispensa = false;
+    														JOptionPane.showMessageDialog(frame, "Hai un ingrediente che non ha abbastnza litri in dispensa. Tale: "+ingrRicettaFinale.get(i).getId_ingrediente());
+    														}
+    													else {
+    														System.out.print("Tale ingrediente va bene "+ ingrRicettaFinale.get(i).getId_ingrediente());
+    													}
+    												}
+    											} catch (Exception e) {
+    												// TODO: handle exception
+    											}
+											} catch (Exception e) {
+												// TODO: handle exception
+											}
+    										i++;
+										}
+        								//faccio il controllo se la ricetta va bene
+        								if(quantitaTotFinale<capienzaAttr && conntrolloDispensa == true) {
+        									JOptionPane.showMessageDialog(frame, "Procediamo a produrre");
+        								}
+									} catch (Exception e) {
+										// TODO: handle exception
+									}
+								} catch (Exception e) {
+									// TODO: handle exception
+								}
+        					}else {
+        						JOptionPane.showMessageDialog(frame, "Inserire dati accettabili");
+    						}
+    					}
+    					else {
+    						JOptionPane.showMessageDialog(frame, "Inserire dati accettabili");
+    					}
+    				}
+    			}
+    		});
+    		btnProduciRicetta.setBounds(660, 333, 200, 29);
+    		frame.getContentPane().add(btnProduciRicetta);
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
