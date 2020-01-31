@@ -281,6 +281,44 @@ public class BrewDayMenu {
 		});
 		mnBirra.add(mntmAggiungiBirra);
 		
+		JMenu mnAttrezzatura = new JMenu("Attrezzature");
+		menuBar.add(mnAttrezzatura);
+		
+		JMenuItem mntmNuovaAttrezzatura = new JMenuItem("Nuova attrezzatura");
+		mntmNuovaAttrezzatura.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				CRUDoperationsAttrezzatura newRic = new CRUDoperationsAttrezzatura(connection, brewerBirraio, "addAttr");
+				newRic.invokeGUI(connection, brewerBirraio, "addAttr");
+				frame.dispose();
+			}
+		});
+		mnAttrezzatura.add(mntmNuovaAttrezzatura);
+		
+		JMenuItem mntmMostraAttrezzatura = new JMenuItem("Mostra attrezzatura");
+		mntmMostraAttrezzatura.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				CRUDoperationsAttrezzatura newRic = new CRUDoperationsAttrezzatura(connection, brewerBirraio, "showAttr");
+				newRic.invokeGUI(connection, brewerBirraio, "showAttr");
+				frame.dispose();
+			}
+		});
+		mnAttrezzatura.add(mntmMostraAttrezzatura);
+		
+		JMenuItem mntmEliminaAttrezzatura = new JMenuItem("Elimina attrezzatura");
+		mntmEliminaAttrezzatura.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				CRUDoperationsAttrezzatura newRic = new CRUDoperationsAttrezzatura(connection, brewerBirraio, "delAttr");
+				newRic.invokeGUI(connection, brewerBirraio, "delAttr");
+				frame.dispose();
+			}
+		});
+		mnAttrezzatura.add(mntmEliminaAttrezzatura);
+	
+		
+		
 		JMenu mnLista = new JMenu("Lista della spesa");
 		menuBar.add(mnLista);
 		

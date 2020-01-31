@@ -6,13 +6,27 @@ public class Attrezzatura {
 	private Integer capacita;
 	private Integer id_attrezzatura;
 	private Integer id_birraio;
+	private String disponibilta;
+	
+	public Attrezzatura(Integer id_attrezzatura, String nome, Integer capacita, Integer id_birraio, String disponibilta) {
+		super();
+		this.nome = nome;
+		this.capacita = capacita;
+		this.id_attrezzatura=id_attrezzatura;
+		this.id_birraio=id_birraio;
+		if(disponibilta!= null) {
+			if(disponibilta.equals("Y") || disponibilta.equals("N"))
+				this.setDisponibilta(disponibilta);
+		}
+	}
 	
 	public Attrezzatura(Integer id_attrezzatura, String nome, Integer capacita, Integer id_birraio) {
 		super();
 		this.nome = nome;
 		this.capacita = capacita;
 		this.id_attrezzatura=id_attrezzatura;
-		this.setId_birraio(id_birraio);
+		this.id_birraio=id_birraio;
+		this.setDisponibilta("Y");
 	}
 	
 	public String getNome() {
@@ -43,6 +57,17 @@ public class Attrezzatura {
 
 	public void setId_birraio(int id_birraio) {
 		this.id_birraio = id_birraio;
+	}
+
+	public String getDisponibilta() {
+		return disponibilta;
+	}
+
+	public void setDisponibilta(String disponibilta) {
+		if(disponibilta!= null) {
+			if(disponibilta.equals("Y") || disponibilta.equals("N"))
+				this.disponibilta=(disponibilta);
+		}
 	}
 	
 }

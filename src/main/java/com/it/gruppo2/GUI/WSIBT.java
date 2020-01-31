@@ -88,10 +88,16 @@ public class WSIBT {
 				sql = "SELECT * FROM ricetta WHERE id_ricetta = " +ricettArrayList.get(f);
 				ResultSet rs1 = stmt1.executeQuery(sql);
 				
+<<<<<<< HEAD
 				int j=0;
 				while(rs1.next()){
 					//inserisco tutti gli ingredienti dentro un array
 					ingrRicetta.add(j,new Ricetta(rs1.getInt("id_ricetta"),rs1.getDouble("quantita"),rs1.getInt("id_birra"),rs1.getInt("id_ingrediente"), rs1.getString("nome"), rs1.getDouble("quantitaPercentuale")));
+=======
+				int j=0, k=0;
+				while(rs1.next()){	
+					ingrRicetta.add(j,new Ricetta(rs1.getInt("id_ricetta"),rs1.getDouble("quantita"),rs1.getInt("id_birra"),rs1.getInt("id_ingrediente"), rs1.getString("nome"), 1));
+>>>>>>> branch 'master' of https://github.com/UnimibSoftEngCourse1920/progetto-birra-2-gruppo-birra-2.git
 					j++;
 					
 	    		}
@@ -253,6 +259,5 @@ public class WSIBT {
 	
 
 			
-	}
 	}
 
