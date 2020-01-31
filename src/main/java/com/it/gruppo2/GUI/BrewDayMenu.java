@@ -321,16 +321,15 @@ public class BrewDayMenu {
 				try (Statement stmt = connection.createStatement();){
 					
 		    		//String sql = "SELECT ricetta.* FROM ricetta INNER JOIN birra ON ricetta.id_birra = birra.id_birra WHERE birra.id_birraio = "+brewerBirraio.getId_birraio()+" GROUP BY id_ricetta HAVING COUNT(id_ingrediente) = (SELECT COUNT(id_ingrediente) FROM ricetta where id_ingrediente = ANY(SELECT DISTINCT dispensa.id_ingrediente FROM dispensa WHERE dispensa.qta > 0))";
-					String sql = "SELECT id_ricetta " + 
-							"FROM ricetta INNER JOIN birra ON ricetta.id_birra = birra.id_birra " + 
-							"WHERE birra.id_birraio = '" + brewerBirraio.getId_birraio() +
-							"' GROUP BY id_ricetta " + 
-							"HAVING (id_ricetta,COUNT(id_ingrediente)) = ANY(SELECT id_ricetta,COUNT(id_ingrediente) " + 
-							"FROM ricetta INNER JOIN birra ON birra.id_birra = ricetta.id_birra " + 
-							"where birra.id_birraio = 1 AND id_ingrediente = ANY(SELECT DISTINCT dispensa.id_ingrediente " + 
-							"FROM dispensa " + 
-							"WHERE dispensa.qta > 0) " + 
-							"GROUP BY id_ricetta)";
+					String sql = "SELECT id_ricetta" + 
+							"							FROM ricetta INNER JOIN birra ON ricetta.id_birra = birra.id_birra  " + 
+							"							WHERE birra.id_birraio = "+brewerBirraio.getId_birraio()+" GROUP BY id_ricetta " + 
+							"							HAVING (id_ricetta,COUNT(id_ingrediente)) = ANY(SELECT id_ricetta,COUNT(id_ingrediente)" + 
+							"							FROM ricetta INNER JOIN birra ON birra.id_birra = ricetta.id_birra " + 
+							"	              			where birra.id_birraio = 1 AND id_ingrediente = ANY(SELECT DISTINCT dispensa.id_ingrediente" + 
+							"							FROM dispensa INNER JOIN ingrediente ON ingrediente.id_ingrediente = dispensa.id_ingrediente INNER JOIN ricetta ON ricetta.id_ingrediente = ingrediente.id_ingrediente" + 
+							"							WHERE dispensa.qta > 0 AND ricetta.quantita<dispensa.qta)" + 
+							"							GROUP BY id_ricetta)";
 					try (ResultSet rSet=stmt.executeQuery(sql);){
 						int j=0;
 			    		while(rSet.next())
@@ -338,14 +337,9 @@ public class BrewDayMenu {
 								ricettArrayList.add(j,rSet.getInt("id_ricetta"));
 								j++;
 			    		}
-			    		rSet.close();
-			    		System.out.println("eeeee");
 						WSIBT grapInterf = new WSIBT(connection, brewerBirraio, ricettArrayList);
-						System.out.println("eeeee");
 						grapInterf.invokeGUI(connection, brewerBirraio, ricettArrayList);
-						System.out.println("eeeee");
 						frame.dispose();
-						System.out.println("eeeee");
 					} catch (Exception e2) {
 						// TODO: handle exception
 					}

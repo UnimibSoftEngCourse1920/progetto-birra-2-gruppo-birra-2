@@ -49,7 +49,7 @@ public class Login {
 	public Login(Connection connection) {
 		initialize(connection);
 	}
-
+	
 	/**
 	 * Initialize the contents of the frame.
 	 */

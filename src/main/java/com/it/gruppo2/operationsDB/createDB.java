@@ -12,7 +12,7 @@ public class createDB {
 		return nameDBString;
 	}
 	public void setNameDBString() {
-		this.nameDBString = "brewdaydb";
+		this.nameDBString = "brewdaydb1";
 	}
 	
 	public String setDB(Connection connection) throws SQLException {

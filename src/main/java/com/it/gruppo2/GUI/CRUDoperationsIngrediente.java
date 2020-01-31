@@ -181,8 +181,7 @@ public class CRUDoperationsIngrediente {
 							}
 							else {
 								System.out.println("Insert new ingrediente into db...");
-								sql = "INSERT INTO ingrediente (nome,tipo)" +
-						                   "VALUES ('"+txtNome.getText()+"','"+comboBox.getSelectedItem()+"')";
+								sql = "INSERT INTO ingrediente (nome,tipo) VALUES ('"+txtNome.getText()+"','"+comboBox.getSelectedItem()+"')";
 								stmt.executeUpdate(sql);
 								sql = "SELECT MAX(ingrediente.id_ingrediente) AS id FROM ingrediente";
 								try (ResultSet rs1 = stmt.executeQuery(sql);){
@@ -191,10 +190,10 @@ public class CRUDoperationsIngrediente {
 									
 									if(Double.parseDouble(txtQta.getText()) > 0)
 										sql = "INSERT INTO dispensa (qta, id_ingrediente, id_birraio, lds)" +
-								                   "VALUES ('"+txtQta.getText()+"','"+rs1.getInt("id")+"','"+birraio.getId_birraio()+"','N')";
+								                   "VALUES ("+txtQta.getText()+","+rs1.getInt("id")+","+birraio.getId_birraio()+",'N')";
 									else {
 										sql = "INSERT INTO dispensa (qta, id_ingrediente, id_birraio, lds)" +
-								                   "VALUES ('"+txtQta.getText()+"','"+rs1.getInt("id")+"','"+birraio.getId_birraio()+"','Y')";
+								                   "VALUES ("+txtQta.getText()+","+rs1.getInt("id")+","+birraio.getId_birraio()+",'Y')";
 									}
 									
 									stmt.executeUpdate(sql);

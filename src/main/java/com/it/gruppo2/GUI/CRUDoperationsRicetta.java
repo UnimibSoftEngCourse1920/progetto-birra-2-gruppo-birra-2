@@ -584,8 +584,8 @@ public class CRUDoperationsRicetta {
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
-				CRUDoperationsRicetta cRicetta = new CRUDoperationsRicetta(connection, birraio, "newRic");
-				cRicetta.invokeGUI(connection, birraio, "newRic");
+				CRUDoperationsRicetta cRicetta = new CRUDoperationsRicetta(connection, birraio, "modRic");
+				cRicetta.invokeGUI(connection, birraio, "modRic");
 				frame3.dispose();
 			}
 		});

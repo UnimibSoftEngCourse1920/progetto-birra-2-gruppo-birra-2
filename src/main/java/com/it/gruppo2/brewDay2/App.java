@@ -1,8 +1,7 @@
 package com.it.gruppo2.brewDay2;
 
-import java.io.IOException;
+import java.io.IOException; 
 import java.sql.Connection;
-import java.sql.SQLException;
 
 import com.it.gruppo2.operationsDB.*;
 
@@ -19,9 +18,15 @@ public class App {
 		connectionDB connectionDB = new connectionDB();
 		connectionDB.setDBCredential();
 		connectionDB.createServerConnection();
-		Connection connection = connectionDB.createDBConnection();
-		//GUI starts
-		Login grapInterf = new Login(connection);
-		grapInterf.invokeGUI(connection);
+		//provare creare il DB
+		connectionDB.createDB();
+		//connessione al DB
+		Connection connection = connectionDB.connectDB();
+		//lancio dell'App
+		if(connection != null) {
+			Login login = new Login(connection);
+			login.invokeGUI(connection);
+		}
+		
 	}
 }

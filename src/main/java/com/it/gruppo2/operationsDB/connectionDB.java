@@ -3,11 +3,12 @@ package com.it.gruppo2.operationsDB;
 import java.io.IOException;
 import java.sql.*;
 
+
 public class connectionDB {
-	public String dbpathString;
-	public String usernameString;
-	public String pwdString;
-	public String nameDBString;
+	protected String dbpathString;
+	protected String usernameString;
+	protected String pwdString;
+	protected String nameDBString;
 	
 	public String getNameDBString() {
 		return nameDBString;
@@ -45,7 +46,7 @@ public class connectionDB {
 	public void setDBCredential() throws IOException {
 
 //		Mock to deleted and uncommented previous lines
-		setDbpathString("jdbc:mysql://localhost:3306/");//delete brewdaydb
+		setDbpathString("jdbc:mysql://localhost:3306/");
 		setUsernameString("root");
 		setPwdString("");
 	}
@@ -81,33 +82,40 @@ public class connectionDB {
 		}
 	}
 	
-	public Connection createDBConnection() {
-		Connection connection = null;
+	public void createDB() {
 		try {
 			if(getNameDBString() != null) //case where database not exists
 			{
 				Class.forName("com.mysql.jdbc.Driver").newInstance();
-				connection = DriverManager.getConnection(getDbpathString()+getNameDBString(), getUsernameString(), getPwdString());
-				if (!connection.isClosed()) {
-					System.out.println("Successfully connected to database..."); 
-					createTables createTables= new createTables(); 
-					createTables.setTables(connection); 
-					return connection;
-					}
-			}
-			else //case exists db
-			{
-				setNameDBString("brewdaydb");
-				Class.forName("com.mysql.jdbc.Driver").newInstance();
-				connection = DriverManager.getConnection(getDbpathString()+getNameDBString(), getUsernameString(), getPwdString()); 
-				if (!connection.isClosed()) {
-					System.out.println("Successfully connected to database...");
-					return connection;
-				}	
+				try (Connection connection1 = DriverManager.getConnection(getDbpathString()+getNameDBString(), getUsernameString(), getPwdString());){
+					if (!connection1.isClosed()) {
+						System.out.println("Successfully connected to database..."); 
+						createTables createTables= new createTables(); 
+						createTables.setTables(connection1); 
+						System.out.println("Tables create and connection closed");
+						}
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
 			}
 		} catch (Exception e) {
-			System.err.println("Excpetion: " + e.getMessage());
+			// TODO: handle exception
+		}		
+	}
+	
+	public Connection connectDB() {
+		try {
+			Connection connection;
+			setNameDBString("brewdaydb1");
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			connection = DriverManager.getConnection(getDbpathString()+getNameDBString(), getUsernameString(), getPwdString()); 
+			if (!connection.isClosed()) {
+				System.out.println("Successfully connected to database...");
+				return connection;
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
-		return connection;
+		return null;		
 	}
 }

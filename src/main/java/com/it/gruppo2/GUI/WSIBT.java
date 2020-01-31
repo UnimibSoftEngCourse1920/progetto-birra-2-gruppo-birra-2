@@ -1,6 +1,6 @@
 package com.it.gruppo2.GUI;
 
-import java.awt.EventQueue;
+import java.awt.EventQueue;  
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -32,7 +32,10 @@ public class WSIBT {
 	private JFrame frame;
 	private double capienzaAttr=0, quantitaRicettaTot=0;
 	private ArrayList<Ricetta> ingrRicetta = new ArrayList<Ricetta>();
+	private ArrayList<Ricetta> ingrRicettaFinale = new ArrayList<Ricetta>();
 	private DefaultListModel<String> nomiRicetta = new DefaultListModel<String>();
+	private DefaultListModel<String> quantitaTotRicetta = new DefaultListModel<String>();
+	private ArrayList<Integer> idRicetta = new ArrayList<Integer>();
 	
 	public void invokeGUI(final Connection connection, final Birraio brewerBirraio, final ArrayList<Integer> ricettArrayList) {
 		EventQueue.invokeLater(new Runnable() {
@@ -69,55 +72,101 @@ public class WSIBT {
 		
 		Statement stmt, stmt1, stmt2;
 		try {
-			int f=0, g=0;
-			while(f<ricettArrayList.size()) {
-				quantitaRicettaTot=0;
-				stmt = connection.createStatement();
-				//prendo la capacità massima dell'attrazzatura del birraio 
-				String sql = "SELECT attrezzatura.capacita FROM attrezzatura WHERE disponibilita = 'Y' AND id_birraio= "+brewerBirraio.getId_birraio()+" ORDER BY capacita DESC LIMIT 1";
-				ResultSet rs = stmt.executeQuery(sql);
-				
-				if(rs.next()) {
-					capienzaAttr=rs.getInt("capacita");
-				}
-				rs.close();
-				
+			int f=0, g=0,z=0;
+			stmt = connection.createStatement();
+			//prendo la capacità massima dell'attrazzatura del birraio 
+			String sql = "SELECT attrezzatura.capacita FROM attrezzatura WHERE disponibilita = 'Y' AND id_birraio= "+brewerBirraio.getId_birraio()+" ORDER BY capacita DESC LIMIT 1";
+			ResultSet rs = stmt.executeQuery(sql);
+			if(rs.next()) {
+				capienzaAttr=rs.getInt("capacita");
+			}
+			rs.close();
+			
+			//passo a visionare tutte le ricette che hanno gli ingredienti >0
+			while(f<ricettArrayList.size()) 
+			{
 				stmt1 = connection.createStatement();
-				//prendo tutti gli ingredienti delle ricette che rispettavano la quantità>0
+				//prendo tutti gli ingredienti della ricetta che sto visitando
 				sql = "SELECT * FROM ricetta WHERE id_ricetta = " +ricettArrayList.get(f);
 				ResultSet rs1 = stmt1.executeQuery(sql);
 				
-				int j=0, k=0;
-				while(rs1.next()){	
-					ingrRicetta.add(j,new Ricetta(rs1.getInt("id_ricetta"),rs1.getDouble("quantita"),rs1.getInt("id_birra"),rs1.getInt("id_ingrediente"), rs1.getString("nome")));
+				int j=0;
+				while(rs1.next()){
+					//inserisco tutti gli ingredienti dentro un array
+					ingrRicetta.add(j,new Ricetta(rs1.getInt("id_ricetta"),rs1.getDouble("quantita"),rs1.getInt("id_birra"),rs1.getInt("id_ingrediente"), rs1.getString("nome"), rs1.getDouble("quantitaPercentuale")));
 					j++;
-		
+					
 	    		}
-				
 				rs1.close();
 				
-				while(k<j) {
+				int k=0;
+				quantitaRicettaTot=0;
+				while(k<ingrRicetta.size())
+				{
 					stmt2 = connection.createStatement();
-					sql = "SELECT qta FROM dispensa WHERE id_ingrediente="+ingrRicetta.get(k).getId_ingrediente();
-					ResultSet rs2 = stmt2.executeQuery(sql);
-					
-					while(rs2.next() && quantitaRicettaTot<=capienzaAttr){	
-						quantitaRicettaTot += (ingrRicetta.get(k).getQuantita() * rs2.getDouble("qta"));
-
-		    		}
+					//seleziono la quantita di quell'ingrediente
+					if(ricettArrayList.get(f) == ingrRicetta.get(k).getId_ricetta()) //seleziono solo gli ingredienti di quella ricetta
+					{
+						sql = "SELECT qta FROM dispensa WHERE id_ingrediente="+ingrRicetta.get(k).getId_ingrediente();
+						ResultSet rs2 = stmt2.executeQuery(sql);
+						if(rs2.next() && quantitaRicettaTot<=capienzaAttr){
+							quantitaRicettaTot += (rs2.getDouble("qta")*(ingrRicetta.get(k).getQuantitaPercentuale()/100));
+			    		}
+						rs2.close();
+					}
 					k++;
-					rs2.close();
 				}
-				
-				if(quantitaRicettaTot<capienzaAttr){
-					//mi salvo l'id della ricetta che va bene 
-					nomiRicetta.add(g, ingrRicetta.get(0).getNome());
-					//creazione array nomiRicetta con dentro le ricette che vanno bene davvero
-					
-					g++;
+				//posso procedere ad inserire la ricetta f
+				if(quantitaRicettaTot<capienzaAttr)
+				{
+					k=0;
+					//visito tutti gli ingredienti
+					while(k<ingrRicetta.size()) {
+						if(ricettArrayList.get(f) == ingrRicetta.get(k).getId_ricetta()) //seleziono solo gli ingredienti di quella ricetta
+						{
+							try (Statement stmt6 = connection.createStatement();){
+								//seleziono la quantità di un ingrediente di quella ricetta
+								sql = "SELECT qta FROM dispensa WHERE id_ingrediente = "+ingrRicetta.get(k).getId_ingrediente();
+								try (ResultSet rs6 = stmt6.executeQuery(sql);){
+									if(rs6.next()) {
+										Double quantityDouble = (rs6.getDouble("qta")*(ingrRicetta.get(k).getQuantitaPercentuale()/100));
+										//inserisco l'ingrediente nella lista
+										ingrRicettaFinale.add(z, new Ricetta(ingrRicetta.get(k).getId_ricetta(), quantityDouble, 0,ingrRicetta.get(k).getId_ingrediente(),null,0));
+										z++;
+									}
+								} catch (Exception e) {
+									// TODO: handle exception
+								}
+							} catch (Exception e) {
+								// TODO: handle exception
+							}
+							
+						}
+						k++;
+					}
+					//devo inserire il nome della ricetta che sto inserendo
+					try (Statement stmt5 = connection.createStatement();){
+						sql = "SELECT DISTINCT nome FROM ricetta WHERE id_ricetta = "+ricettArrayList.get(f);
+						try (ResultSet rSet = stmt5.executeQuery(sql);){
+							if(rSet.next()){
+								System.out.println(rSet.getString("nome"));
+								//inserisco il nome della ricetta alla posizione g
+								nomiRicetta.addElement(rSet.getString("nome"));
+								//inserisco l'id della ricetta alla posizione g
+								idRicetta.add(g, ricettArrayList.get(f));
+								//
+								quantitaTotRicetta.addElement(Double.toString(quantitaRicettaTot));
+								g++;
+							}
+						} catch (Exception e) {
+							// TODO: handle exception
+						}
+					} catch (Exception e) {
+						// TODO: handle exception
+					}
 				}
 				f++;
-		}
+			}
 		
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
@@ -126,35 +175,40 @@ public class WSIBT {
 		
 		//crazione oggetti birra basati sul database...
 		final JList<String> listWSITB = new JList<String>(nomiRicetta);
-		listWSITB.setBounds(295, 93, 200, 200);
+		listWSITB.setBounds(154, 92, 200, 200);
 		frame.getContentPane().add(listWSITB);
 
 		
 		JButton btnPrepara = new JButton("Prepara");
-		btnPrepara.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		btnPrepara.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent e) 
+			{
 				
 				if(listWSITB.getSelectedValue()==null)
 					JOptionPane.showMessageDialog(frame, "Seleziona una ricetta!");
 				else {
 					int input = JOptionPane.showOptionDialog(frame, "Sei sicuro di voler preparare " +listWSITB.getSelectedValue()+"?", "WSIBT", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);				    
+					//id della ricetta selezionata
+					int idRicettaSelezionata = idRicetta.get(listWSITB.getSelectedIndex());
 					if(input == JOptionPane.YES_OPTION){
 						int h=0;
-						Statement stmt4;
-						try {
-							while(h<ingrRicetta.size()) {
-								String sql="UPDATE dispensa SET qta='"+ingrRicetta.get(h).getQuantita()+"' WHERE id_ingrediente='"+ingrRicetta.get(h).getId_ingrediente()+"' AND `id_birraio`='"+brewerBirraio.getId_birraio()+"';";                 
-								stmt4 = connection.createStatement();
-								stmt4.executeUpdate(sql);
+						//aggiornare le quantità tutti gli ingredienti di quella ricetta
+						while(h<ingrRicettaFinale.size()) {
+							if(ingrRicettaFinale.get(h).getId_ricetta() == idRicettaSelezionata) {
+								try (Statement stmt4 = connection.createStatement();){
+									String sql="UPDATE dispensa SET qta = (qta - "+ingrRicettaFinale.get(h).getQuantita()+") WHERE id_ingrediente= "+ingrRicettaFinale.get(h).getId_ingrediente()+" AND id_birraio = "+brewerBirraio.getId_birraio();                 
+									stmt4.executeUpdate(sql);
+								} catch (Exception e2) {
+									// TODO: handle exception
+								}
 								
-								BrewDayMenu bDayMenu = new BrewDayMenu(connection, brewerBirraio);
-								bDayMenu.invokeGUI(connection, brewerBirraio, 1);
-								frame.dispose();
 							}
-						} catch (SQLException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
+							h++;
 						}
+						BrewDayMenu bDayMenu = new BrewDayMenu(connection, brewerBirraio);
+						bDayMenu.invokeGUI(connection, brewerBirraio, 1);
+						frame.dispose();
 						
 					}
 				}
@@ -178,12 +232,15 @@ public class WSIBT {
 		menuBar.add(mntmIndietro);
 		frame.getContentPane().setLayout(null);
 		
+		JList<String> listQtaTot = new JList<String>(quantitaTotRicetta);
+		listQtaTot.setBounds(413, 92, 200, 200);
+		frame.getContentPane().add(listQtaTot);
+		
 		
 		
 	
 
 			
 	}
-
 	}
 

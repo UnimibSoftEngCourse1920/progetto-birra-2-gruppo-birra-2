@@ -94,47 +94,22 @@ public class ListaDellaSpesa {
 			public void actionPerformed(ActionEvent e) {
 				if(listd.getSelectedValue()!= null) 
 				{
-					String code = JOptionPane.showInputDialog(frame, "Aggiornamento dispensa: hai acquistato altro " +listd.getSelectedValue()+"?", "Update lista della spesa", JOptionPane.INFORMATION_MESSAGE);
+					String code = JOptionPane.showInputDialog(frame, "Aggiornamento dispensa: Quanto/a " +listd.getSelectedValue()+" hai acquistato?", "Update lista della spesa", JOptionPane.INFORMATION_MESSAGE);
 				    
-					if(code != null)
+					if(!code.isEmpty())
 					{
-						
 						try (Statement stmt1 = connection.createStatement();){
 							String sql="UPDATE dispensa SET lds='N', qta = qta + '"+Double.parseDouble(code)+ "' WHERE  id_ingrediente='" +ingredienteList.get(listd.getSelectedIndex()).getId_ingrediente()+"' AND id_birraio='" + brewerBirraio.getId_birraio()+ "'";
-							
 							stmt1.executeUpdate(sql);
-							System.out.println("1");
 							BrewDayMenu bDayMenu = new BrewDayMenu(connection, brewerBirraio);
 							bDayMenu.invokeGUI(connection, brewerBirraio);
 							frame.dispose();
-							System.out.println("1");
 						} catch (SQLException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
-						code = JOptionPane.showInputDialog(frame, "Aggiornamento dispensa: hai acquistato altro " +listd.getSelectedValue()+"?", "Update lista della spesa", JOptionPane.INFORMATION_MESSAGE);
-					    
-						if(code != null)
-						{
-							Statement stmt1;
-							try {
-								String sql="UPDATE dispensa SET lds='N', qta = qta + '"+Double.parseDouble(code)+ "' WHERE  id_ingrediente='" +ingredienteList.get(listd.getSelectedIndex()).getId_ingrediente()+"' AND id_birraio='" + brewerBirraio.getId_birraio()+ "'";					
-								stmt1 = connection.createStatement();
-								stmt1.executeUpdate(sql);
-								System.out.println("1");
-								BrewDayMenu bDayMenu = new BrewDayMenu(connection, brewerBirraio);
-								bDayMenu.invokeGUI(connection, brewerBirraio);
-								frame.dispose();
-								System.out.println("1");
-							} catch (SQLException e1) {
-								e1.printStackTrace();
-							}
-						}
-						else {
-							JOptionPane.showMessageDialog(frame, "Inserisci un numero");
-						}
 					}
-			}
+				}
 			}
 		});
 		btnTogli.setBounds(300, 74, 151, 31);

@@ -9,15 +9,16 @@ public class createTables {
 			System.out.println("Creating table in given database...");
 			String sql = "CREATE TABLE `attrezzatura` (\r\n" + 
 					"  `id_attrezzatura` int(11) NOT NULL,\r\n" + 
-					"  `nome` varchar(20) NOT NULL,\r\n" + 
+					"  `nome` varchar(30) NOT NULL,\r\n" + 
 					"  `capacita` int(11) NOT NULL,\r\n" + 
-					"  `id_birraio` int(11) NOT NULL\r\n" + 
+					"  `id_birraio` int(11) NOT NULL,\r\n" + 
+					"  `disponibilita` enum('Y','N') NOT NULL DEFAULT 'Y'\r\n" + 
 					")";
 			stmt.executeUpdate(sql);
 			sql = "CREATE TABLE `birra` (\r\n" + 
 					"  `id_birra` int(11) NOT NULL,\r\n" + 
 					"  `nome` varchar(20) NOT NULL,\r\n" + 
-					"  `tipo` varchar(20) NOT NULL,\r\n" + 
+					"  `note` text DEFAULT NULL,\r\n" + 
 					"  `id_birraio` int(11) NOT NULL\r\n" + 
 					")";
 			stmt.executeUpdate(sql);
@@ -32,18 +33,35 @@ public class createTables {
 			sql = "CREATE TABLE `dispensa` (\r\n" + 
 					"  `qta` double DEFAULT NULL,\r\n" + 
 					"  `id_ingrediente` int(11) NOT NULL,\r\n" + 
-					"  `id_birraio` int(11) NOT NULL\r\n" + 
+					"  `id_birraio` int(11) NOT NULL,\r\n" + 
+					"  `lds` enum('Y','N') NOT NULL DEFAULT 'N'\r\n" + 
 					")";
 			stmt.executeUpdate(sql);
 			sql = "CREATE TABLE `ingrediente` (\r\n" + 
-					"  `nome` varchar(15) NOT NULL,\r\n" + 
+					"  `nome` varchar(30) NOT NULL,\r\n" + 
 					"  `id_ingrediente` int(11) NOT NULL,\r\n" + 
-					"  `tipo` enum('zucchero','lievito','additivi','malto','luppolo') NOT NULL\r\n" +
+					"  `tipo` enum('acqua','zucchero','lievito','additivi','malto','luppolo') NOT NULL\r\n" + 
 					")";
 			stmt.executeUpdate(sql);
+			sql = "CREATE TABLE `ricetta` (\r\n" + 
+					"  `id_ricetta` int(11) NOT NULL,\r\n" + 
+					"  `id_ingrediente` int(11) NOT NULL,\r\n" + 
+					"  `id_birra` int(11) NOT NULL,\r\n" + 
+					"  `quantita` double NOT NULL,\r\n" + 
+					"  `nome` varchar(30) NOT NULL,\r\n" + 
+					"  `quantitaPercentuale` double NOT NULL\r\n" + 
+					")";
+			stmt.executeUpdate(sql);
+			
+			
+			
+			
+			
+			
+			
 			sql = "ALTER TABLE `attrezzatura`\r\n" + 
 					"  ADD PRIMARY KEY (`id_attrezzatura`),\r\n" + 
-					"  ADD KEY `id_birraio` (`id_birraio`);";
+					"  ADD KEY `idfk_id_birraio` (`id_birraio`);";
 			stmt.executeUpdate(sql);
 			sql = "ALTER TABLE `birra`\r\n" + 
 					"  ADD PRIMARY KEY (`id_birra`),\r\n" + 
@@ -59,6 +77,18 @@ public class createTables {
 			sql = "ALTER TABLE `ingrediente`\r\n" + 
 					"  ADD PRIMARY KEY (`id_ingrediente`);";
 			stmt.executeUpdate(sql);
+			sql = "ALTER TABLE `ricetta`\r\n" + 
+					"  ADD PRIMARY KEY (`id_ricetta`,`id_ingrediente`,`id_birra`) USING BTREE,\r\n" + 
+					"  ADD KEY `idfk_id_ingrediente` (`id_ingrediente`),\r\n" + 
+					"  ADD KEY `idfk_id_birra` (`id_birra`);";
+			stmt.executeUpdate(sql);
+			
+			
+			
+			
+			
+			
+			
 			sql = "ALTER TABLE `attrezzatura`\r\n" + 
 					"  MODIFY `id_attrezzatura` int(11) NOT NULL AUTO_INCREMENT;";
 			stmt.executeUpdate(sql);
@@ -71,6 +101,16 @@ public class createTables {
 			sql = "ALTER TABLE `ingrediente`\r\n" + 
 					"  MODIFY `id_ingrediente` int(11) NOT NULL AUTO_INCREMENT;";
 			stmt.executeUpdate(sql);
+			sql = "ALTER TABLE `ricetta`\r\n" + 
+					"  MODIFY `id_ricetta` int(11) NOT NULL AUTO_INCREMENT;";
+			stmt.executeUpdate(sql);
+			
+			
+			
+			
+			
+			
+			
 			sql = "ALTER TABLE `birra`\r\n" + 
 					"  ADD CONSTRAINT `birra_ibfk_1` FOREIGN KEY (`id_birraio`) REFERENCES `birraio` (`id_birraio`) ON DELETE NO ACTION ON UPDATE CASCADE;";
 			stmt.executeUpdate(sql);
@@ -78,19 +118,12 @@ public class createTables {
 					"  ADD CONSTRAINT `dispensa_ibfk_1` FOREIGN KEY (`id_ingrediente`) REFERENCES `ingrediente` (`id_ingrediente`),\r\n" + 
 					"  ADD CONSTRAINT `dispensa_ibfk_2` FOREIGN KEY (`id_birraio`) REFERENCES `birraio` (`id_birraio`);";
 			stmt.executeUpdate(sql);
-			sql = "CREATE TABLE `ricetta` (\r\n" + 
-					"  `id_ricetta` int(11) NOT NULL AUTO_INCREMENT,\r\n" +
-					"  `id_birra` int(11) NOT NULL,\r\n" + 
-					"  `id_ingrediente` int(11) NOT NULL,\r\n" + 
-					"  `quantita` double NULL\r\n" + 
-					")";
+			sql = "ALTER TABLE `attrezzatura`\r\n" + 
+					"  ADD CONSTRAINT `idfk_id_birraio` FOREIGN KEY (`id_birraio`) REFERENCES `birraio` (`id_birraio`);";
 			stmt.executeUpdate(sql);
 			sql = "ALTER TABLE `ricetta`\r\n" + 
-					"  ADD PRIMARY KEY ('id_ricetta', 'id_ingrediente', 'id_birra');";
-			stmt.executeUpdate(sql);
-			sql = "ALTER TABLE `ricetta`\r\n" + 
-					"  ADD CONSTRAINT `idfk_id_birra` FOREIGN KEY (`id_birra`) REFERENCES `birra` (`id_birra`),\r\n" + 
-					"  ADD CONSTRAINT `idfk_id_ingrediente` FOREIGN KEY (`id_ingrediente`) REFERENCES `ingrediente` (`id_ingrediente`);";
+					"  ADD CONSTRAINT `idfk_id_birra` FOREIGN KEY (`id_birra`) REFERENCES `birra` (`id_birra`) ON DELETE NO ACTION ON UPDATE CASCADE,\r\n" + 
+					"  ADD CONSTRAINT `idfk_id_ingrediente` FOREIGN KEY (`id_ingrediente`) REFERENCES `ingrediente` (`id_ingrediente`) ON DELETE NO ACTION ON UPDATE CASCADE;";
 			stmt.executeUpdate(sql);
 			System.out.println("Created table in given database..");
 		}
