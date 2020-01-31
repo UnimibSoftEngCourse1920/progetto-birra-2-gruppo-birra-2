@@ -16,6 +16,8 @@ import com.it.gruppo2.brewDay2.Ricetta;
 
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JLabel;
@@ -385,10 +387,9 @@ public class CRUDoperationsRicetta {
 						if(rs.next())
 						{
 							if(rs.getDouble("qta") < Double.valueOf(txtQta.getText())) {
-								System.out.println("SFORATO LA QUANTITA' MASSIMA!");
+								JOptionPane.showMessageDialog(frame, "SFORATO LA QUANTITA' MASSIMA");
 							}
 							else {
-								System.out.println("Insert new ingrediente into db...");
 								//verifico se la ricetta esiste già
 								sql = "SELECT DISTINCT id_ricetta AS id FROM ricetta WHERE nome = '"+ nomeRicetta +"' AND id_birra = '"+id_birra+"'";
 								try (ResultSet rs1 = stmt1.executeQuery(sql);){
@@ -400,6 +401,7 @@ public class CRUDoperationsRicetta {
 										sql = "INSERT INTO ricetta (id_ingrediente, id_birra, quantita, nome, quantitaPercentuale)" +
 								                   "VALUES ('"+ id_ingr +"','"+id_birra+"','"+Double.valueOf(txtQta.getText())+"','"+nomeRicetta+"', 0)";
 									}
+									JOptionPane.showMessageDialog(frame, "RICETTA INSERITA");
 									rs1.close();
 									stmt.executeUpdate(sql);
 								} catch (Exception e2) {
@@ -485,6 +487,7 @@ public class CRUDoperationsRicetta {
 						
 						String sql = "DELETE FROM ricetta WHERE id_ricetta = '"+ricettaList.get(comboRicetta.getSelectedIndex()).getId_ricetta()+"' AND id_birra = '"+id_birra+"'";
 						stmt1.executeUpdate(sql);
+						JOptionPane.showMessageDialog(frame, "RICETTA ELIMINATA");
 						CRUDoperationsRicetta cRicetta = new CRUDoperationsRicetta(connection, birraio, "delRic");
 						cRicetta.invokeGUI(connection, birraio, "delRic");
 						frame2.dispose();
@@ -554,7 +557,7 @@ public class CRUDoperationsRicetta {
 					try (ResultSet rs = stmt.executeQuery(sql);){
 						if(!rs.next())
 						{
-							System.out.print("Nessun ingrediente inserito");
+							JOptionPane.showMessageDialog(frame, "NESSUN INGREDIENTE INSERITO");
 						}else 
 						{
 							ArrayList<Ricetta> ricettas = new ArrayList<Ricetta>();
@@ -647,20 +650,18 @@ public class CRUDoperationsRicetta {
 						
 						//verifica che non vengano superate le quanità massime
 						int id_ingr = ingredienteList.get(comboIngrediente.getSelectedIndex()).getId_ingrediente();
-						System.out.println(Double.valueOf(txtQta.getText()));
 						String sql = "SELECT dispensa.qta AS qta FROM dispensa WHERE dispensa.id_ingrediente = '"+ id_ingr +"' AND dispensa.id_birraio = '" + birraio.getId_birraio() + "'";
 						try (ResultSet rs = stmt.executeQuery(sql);){
 							if(rs.next())
 							{
 								if(rs.getDouble("qta") < Double.valueOf(txtQta.getText())) {
-									System.out.println("SFORATO LA QUANTITA' MASSIMA!");
+									JOptionPane.showMessageDialog(frame, "SFORATO LA QUANTITA' MASSIMA");
 								}
-								else {
-									System.out.println("Insert new ingrediente into db...");
-									
+								else {									
 									sql = "INSERT INTO ricetta (id_ricetta, id_ingrediente, id_birra, quantita, nome, quantitaPercentuale)" +
 							                   "VALUES ('"+id_ricetta+"','"+ id_ingr +"','"+id_birra+"','"+Double.valueOf(txtQta.getText())+"','"+nomeRic+"', 0)";
 									stmt1.executeUpdate(sql);
+									JOptionPane.showMessageDialog(frame, "INGREDIENTE INSERITO");
 									
 								}
 							}
@@ -734,7 +735,7 @@ public class CRUDoperationsRicetta {
 							if(rs.next())
 							{
 								if(rs.getDouble("qta") < Double.valueOf(txtQta.getText())) {
-									System.out.println("SFORATO LA QUANTITA' MASSIMA!");
+									JOptionPane.showMessageDialog(frame, "SFORATO LA QUANTITA' MASSIMA");
 								}
 								else {
 									System.out.println("Insert modified ingrediente into db...");

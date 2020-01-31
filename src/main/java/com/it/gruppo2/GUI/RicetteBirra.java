@@ -210,22 +210,26 @@ public class RicetteBirra {
     										i++;
 										}
         								//faccio il controllo se la ricetta va bene
-        								if(quantitaTotFinale<capienzaAttr && conntrolloDispensa == true) {
-        									JOptionPane.showMessageDialog(frame, "Procediamo a produrre");
-        									//aggiornare le quantità tutti gli ingredienti di quella ricetta
-        									int h = 0;
-        									while(h<ingrRicettaFinale.size()) {
-        											try (Statement stmt4 = connection.createStatement();){
-        												sql="UPDATE dispensa SET qta = (qta - "+ingrRicettaFinale.get(h).getQuantita()+") WHERE id_ingrediente= "+ingrRicettaFinale.get(h).getId_ingrediente()+" AND id_birraio = "+brewerBirraio.getId_birraio();                 
-        												stmt4.executeUpdate(sql);
-        											} catch (Exception e2) {
-        												// TODO: handle exception
-        											}
-        										h++;
+        								if(quantitaTotFinale<capienzaAttr) {
+        									if(conntrolloDispensa == true) {
+        										JOptionPane.showMessageDialog(frame, "Procediamo a produrre");
+            									//aggiornare le quantità tutti gli ingredienti di quella ricetta
+            									int h = 0;
+            									while(h<ingrRicettaFinale.size()) {
+            											try (Statement stmt4 = connection.createStatement();){
+            												sql="UPDATE dispensa SET qta = (qta - "+ingrRicettaFinale.get(h).getQuantita()+") WHERE id_ingrediente= "+ingrRicettaFinale.get(h).getId_ingrediente()+" AND id_birraio = "+brewerBirraio.getId_birraio();                 
+            												stmt4.executeUpdate(sql);
+            											} catch (Exception e2) {
+            												// TODO: handle exception
+            											}
+            										h++;
+            									}
+            									BrewDayMenu bDayMenu = new BrewDayMenu(connection, brewerBirraio);
+            									bDayMenu.invokeGUI(connection, brewerBirraio, 1);
+            									frame.dispose();
         									}
-        									BrewDayMenu bDayMenu = new BrewDayMenu(connection, brewerBirraio);
-        									bDayMenu.invokeGUI(connection, brewerBirraio, 1);
-        									frame.dispose();
+        								}else {
+        									JOptionPane.showMessageDialog(frame, "La produzione richiede una quantità maggiore di quella che dell'attrezzatura");
         								}
 									} catch (Exception e) {
 										// TODO: handle exception

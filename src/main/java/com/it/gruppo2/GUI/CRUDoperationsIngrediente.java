@@ -1,6 +1,6 @@
 package com.it.gruppo2.GUI;
 
-import java.awt.EventQueue;
+import java.awt.EventQueue; 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,6 +14,7 @@ import com.it.gruppo2.brewDay2.Ingrediente;
 
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JLabel;
@@ -82,7 +83,79 @@ public class CRUDoperationsIngrediente {
 		});
 		menuBar.add(mntmIndietro);
 		frame.getContentPane().setLayout(null);
-		
+		if(operation.equals("modIngr")) {
+			JLabel lblNomeIngrediente = new JLabel("Nome Ingrediente");
+			lblNomeIngrediente.setBounds(77, 64, 182, 20);
+			frame.getContentPane().add(lblNomeIngrediente);
+			
+			ArrayList<String> arrayListIngrediente = new ArrayList<String>();
+			final ArrayList<Ingrediente> ingredienteList = new ArrayList<Ingrediente>();
+			try (Statement stmt1 = connection.createStatement();){
+				
+				//seleziono tutti gli ingredienti
+				String sql = "SELECT ingrediente.id_ingrediente AS id, ingrediente.nome FROM ingrediente INNER JOIN dispensa ON dispensa.id_ingrediente = ingrediente.id_ingrediente WHERE dispensa.id_birraio = '"+birraio.getId_birraio()+"'";
+				try (ResultSet rs = stmt1.executeQuery(sql);){
+					int i = 0;
+					while(rs.next())
+					{
+						ingredienteList.add(new Ingrediente(rs.getInt("id"),rs.getString("nome"), null));
+						arrayListIngrediente.add(ingredienteList.get(i).getNome());
+						i++;
+					}
+					rs.close();
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+				
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			final JComboBox comboIngrediente = new JComboBox(arrayListIngrediente.toArray());
+			comboIngrediente.setBounds(305, 61, 267, 26);
+			frame.getContentPane().add(comboIngrediente);
+
+			txtQta = new JTextField();
+			txtQta.setBounds(305, 196, 267, 26);
+			frame.getContentPane().add(txtQta);
+			txtQta.setColumns(10);
+			
+			JLabel lblQuantit = new JLabel("Quantità");
+			lblQuantit.setBounds(77, 199, 69, 20);
+			frame.getContentPane().add(lblQuantit);
+			
+			JButton btnModificaIngrediente = new JButton("Modifica Ingrediente");
+			btnModificaIngrediente.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent e) {
+					try (Statement stmt = connection.createStatement();){
+						
+						//verifica che non esista un altro ingrediente uguale
+						String sql = "SELECT ingrediente.id_ingrediente AS id FROM dispensa INNER JOIN ingrediente ON ingrediente.id_ingrediente = dispensa.id_ingrediente WHERE ingrediente.nome = '"+ comboIngrediente.getSelectedItem() +"' AND dispensa.id_birraio = '" + birraio.getId_birraio() + "'";
+						try (ResultSet rs = stmt.executeQuery(sql);){
+							if(rs.next()) //caso in cui l'ingrediente esiste
+							{
+								if(Double.parseDouble(txtQta.getText()) == 0) {
+									sql = "UPDATE dispensa SET qta = 0, lds = 'Y' WHERE id_birraio = "+birraio.getId_birraio()+" AND id_ingrediente = "+rs.getInt("id");
+								}else {
+									sql = "UPDATE dispensa SET qta = "+Double.parseDouble(txtQta.getText())+", lds = 'N' WHERE id_birraio = "+birraio.getId_birraio()+" AND id_ingrediente = "+rs.getInt("id");
+								}
+								stmt.executeUpdate(sql);
+							}
+							rs.close();
+						} catch (Exception e2) {
+							// TODO: handle exception
+						}
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+					BrewDayMenu bDayMenu = new BrewDayMenu(connection, birraio);
+					bDayMenu.invokeGUI(connection, birraio);
+					frame.dispose();
+				}
+			});
+			btnModificaIngrediente.setBounds(600, 124, 192, 29);
+			frame.getContentPane().add(btnModificaIngrediente);
+		}
 		if(operation.equals("delIngr")) {
 			JLabel lblNome = new JLabel("Nome Ingrediente");
 			lblNome.setBounds(61, 75, 69, 20);

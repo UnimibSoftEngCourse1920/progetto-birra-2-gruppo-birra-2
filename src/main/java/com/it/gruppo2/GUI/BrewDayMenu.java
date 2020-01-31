@@ -261,6 +261,17 @@ public class BrewDayMenu {
 			}
 		});
 		mnIngredienti.add(mntmEliminaIngrediente);
+		
+		JMenuItem mntmModificaIngrediente = new JMenuItem("Modifica Ingrediente");
+		mntmModificaIngrediente.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				CRUDoperationsIngrediente showIngr = new CRUDoperationsIngrediente(connection, brewerBirraio, "modIngr");
+				showIngr.invokeGUI(connection, brewerBirraio, "modIngr");
+				frame.dispose();
+			}
+		});
+		mnIngredienti.add(mntmModificaIngrediente);
 		mnIngredienti.add(mntmAggiungiIngrediente);
 		
 		JMenu mnBirra = new JMenu("Birra");
