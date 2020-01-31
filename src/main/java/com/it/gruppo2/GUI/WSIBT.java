@@ -89,7 +89,7 @@ public class WSIBT {
 				
 				int j=0, k=0;
 				while(rs1.next()){	
-					ingrRicetta.add(j,new Ricetta(rs1.getInt("id_ricetta"),rs1.getDouble("quantita"),rs1.getInt("id_birra"),rs1.getInt("id_ingrediente"), rs1.getString("nome")));
+					ingrRicetta.add(j,new Ricetta(rs1.getInt("id_ricetta"),rs1.getDouble("quantita"),rs1.getInt("id_birra"),rs1.getInt("id_ingrediente"), rs1.getString("nome"), 1));
 					j++;
 		
 	    		}
