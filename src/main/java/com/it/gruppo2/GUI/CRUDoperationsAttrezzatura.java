@@ -92,7 +92,7 @@ public class CRUDoperationsAttrezzatura {
 		//ELIMINA ATTREZZATURA
 		if(operation.equals("delAttr")) {
 			JLabel lblNome = new JLabel("Nome attrezzatura");
-			lblNome.setBounds(61, 75, 69, 20);
+			lblNome.setBounds(61, 75, 150, 20);
 			frame.getContentPane().add(lblNome);
 			
 			ArrayList<String> arrayListAttrezzatura = new ArrayList<String>();
@@ -121,7 +121,7 @@ public class CRUDoperationsAttrezzatura {
 			
 
 			
-			final JButton btnEliminaAttrezzatura = new JButton("Elimina Ingrediente");
+			final JButton btnEliminaAttrezzatura = new JButton("Elimina Attrezzatura");
 			btnEliminaAttrezzatura.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mousePressed(MouseEvent e) {
@@ -138,7 +138,7 @@ public class CRUDoperationsAttrezzatura {
 					frame.dispose();
 				}
 			});
-			btnEliminaAttrezzatura.setBounds(543, 75, 115, 29);
+			btnEliminaAttrezzatura.setBounds(543, 75, 150, 29);
 			frame.getContentPane().add(btnEliminaAttrezzatura);
 		}
 		
@@ -242,34 +242,36 @@ public class CRUDoperationsAttrezzatura {
 		
 		//MOSTRA ATTREZZATURA
 		if(operation.equals("showAttr")) 
-		{
-			
-			
+		{	
 			try (Statement stmt = connection.createStatement();){
 				String sql = "SELECT attrezzatura.nome AS nome, attrezzatura.capacita AS capacita FROM attrezzatura WHERE attrezzatura.id_birraio = '" + birraio.getId_birraio() + "'";
 				try (ResultSet rs = stmt.executeQuery(sql);){
 					DefaultListModel<String> nomeList = new DefaultListModel<String>();
-					DefaultListModel<Double> capacitaList = new DefaultListModel<Double>();
+					DefaultListModel<String> capacitaList = new DefaultListModel<String>();
 					int o=0;
 					while(rs.next())
 					{
 							nomeList.add(o, rs.getString("nome"));
-							capacitaList.add(o, rs.getDouble("capacita"));
-							System.out.println(nomeList.getElementAt(o));
-							System.out.println(capacitaList.getElementAt(o));
+							capacitaList.add(o, Double.toString(rs.getDouble("capacita")));
 							o++;
 					}
 					
-					final JList<String> listIngrName = new JList<String>(nomeList);
-					listIngrName.setBounds(64, 32, 200, 200);
-					frame.getContentPane().add(listIngrName);
+					final JList<String> listAttrName = new JList<String>(nomeList);
+					listAttrName.setBounds(64, 32, 200, 200);
+					frame.getContentPane().add(listAttrName);
 					
-					rs.close();
+					final JList<String> listAttrQta = new JList<String>(capacitaList);
+					listAttrQta.setBounds(300, 32, 200, 200);
+					frame.getContentPane().add(listAttrQta);
 				} catch (Exception e) {
 					// TODO: handle exception
+					e.printStackTrace();
+
 				}
 			} catch (Exception e) {
 				// TODO: handle exception
+				e.printStackTrace();
+
 			}
 		}
 	}

@@ -300,18 +300,18 @@ public class BrewDayMenu {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				CRUDoperationsAttrezzatura newRic = new CRUDoperationsAttrezzatura(connection, brewerBirraio, "showAttr");
-				newRic.invokeGUI(connection, brewerBirraio, "delRic");
+				newRic.invokeGUI(connection, brewerBirraio, "showAttr");
 				frame.dispose();
 			}
 		});
 		mnAttrezzatura.add(mntmMostraAttrezzatura);
 		
-		JMenuItem mntmEliminaAttrezzatura = new JMenuItem("Modifica attrezzatura");
+		JMenuItem mntmEliminaAttrezzatura = new JMenuItem("Elimina attrezzatura");
 		mntmEliminaAttrezzatura.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				CRUDoperationsAttrezzatura newRic = new CRUDoperationsAttrezzatura(connection, brewerBirraio, "delAttr");
-				newRic.invokeGUI(connection, brewerBirraio, "delRic");
+				newRic.invokeGUI(connection, brewerBirraio, "delAttr");
 				frame.dispose();
 			}
 		});
