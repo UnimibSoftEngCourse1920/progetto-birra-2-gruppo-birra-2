@@ -18,11 +18,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.awt.event.ActionEvent;
+import javax.swing.JPasswordField;
 
 public class SignUp {
 
 	
 	private JFrame frame;
+	private JPasswordField passwordField;
+	private JPasswordField passwordField_1;
 
 	/**
 	 * Launch the application.
@@ -57,15 +60,15 @@ public class SignUp {
 		frame.getContentPane().setLayout(null);
 		
 		final JFormattedTextField fieldNome = new JFormattedTextField();
-		fieldNome.setBounds(207, 40, 86, 20);
+		fieldNome.setBounds(238, 40, 86, 20);
 		frame.getContentPane().add(fieldNome);
 		
 		final JFormattedTextField fieldCognome = new JFormattedTextField();
-		fieldCognome.setBounds(207, 71, 86, 20);
+		fieldCognome.setBounds(238, 71, 86, 20);
 		frame.getContentPane().add(fieldCognome);
 		
 		final JFormattedTextField fieldUsername = new JFormattedTextField();
-		fieldUsername.setBounds(207, 164, 86, 20);
+		fieldUsername.setBounds(238, 164, 86, 20);
 		frame.getContentPane().add(fieldUsername);
 		
 		JLabel lblUsername = new JLabel("Username");
@@ -89,17 +92,9 @@ public class SignUp {
 		lblPassword.setBounds(73, 105, 126, 14);
 		frame.getContentPane().add(lblPassword);
 		
-		final JFormattedTextField fieldPass = new JFormattedTextField();
-		fieldPass.setBounds(207, 107, 86, 20);
-		frame.getContentPane().add(fieldPass);
-		
-		final JFormattedTextField fieldConfPass = new JFormattedTextField();
-		fieldConfPass.setBounds(207, 136, 86, 20);
-		frame.getContentPane().add(fieldConfPass);
-		
 		JLabel lblConfPassword = new JLabel("Conferma password");
 		lblConfPassword.setHorizontalAlignment(SwingConstants.LEFT);
-		lblConfPassword.setBounds(71, 136, 126, 14);
+		lblConfPassword.setBounds(73, 137, 160, 14);
 		frame.getContentPane().add(lblConfPassword);
 		
 		JButton btnSignUp = new JButton("Sign up");
@@ -108,8 +103,10 @@ public class SignUp {
 				String nome = fieldNome.getText();
 				String cognome = fieldCognome.getText();
 				String username = fieldUsername.getText();
-				String password = fieldPass.getText();
-				String confpass = fieldConfPass.getText();
+				char[] pass = passwordField.getPassword();
+				char[] passCon = passwordField_1.getPassword();
+				String password = new String(pass);
+				String confpass = new String(passCon);
 				
 				//controllo sui campi se sono stati compilati
 				if(nome.length()==0 ||cognome.length()==0 || username.length()==0 || password.length()==0 || confpass.length()==0)	
@@ -158,5 +155,13 @@ public class SignUp {
 		});
 		btnSignUp.setBounds(156, 274, 89, 23);
 		frame.getContentPane().add(btnSignUp);
+		
+		passwordField = new JPasswordField();
+		passwordField.setBounds(238, 102, 86, 20);
+		frame.getContentPane().add(passwordField);
+		
+		passwordField_1 = new JPasswordField();
+		passwordField_1.setBounds(238, 134, 86, 20);
+		frame.getContentPane().add(passwordField_1);
 	}
 }

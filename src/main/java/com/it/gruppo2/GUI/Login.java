@@ -15,6 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import com.it.gruppo2.brewDay2.Birraio;
+import javax.swing.JPasswordField;
 
 public class Login {
 
@@ -23,6 +24,7 @@ public class Login {
 	private JButton loginButton;
 	private JLabel lblNewLabel;
 	private JLabel lblNewLabel_1;
+	private JPasswordField passwordField;
 
 	/**l
 	 * Launch the application.
@@ -76,18 +78,15 @@ public class Login {
 		lblNewLabel_1.setBounds(79, 105, 94, 14);
 		frame.getContentPane().add(lblNewLabel_1);
 		
-		final JFormattedTextField passwordField = new JFormattedTextField();
-		passwordField.setText("password");
-		passwordField.setBounds(183, 99, 100, 26);
-		frame.getContentPane().add(passwordField);
-		
 		//Button per il login
 		loginButton = new JButton("Login");
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent loginButton) {
 				try (Statement stmt = connection.createStatement();){
 					System.out.println("Checking existing brewer...");
-					String sql = "SELECT * FROM birraio WHERE username = '" + userField.getText() + "' AND password = '" + passwordField.getText() +"'";
+					char[] password = passwordField.getPassword();
+					String pwdCorretta = new String(password);
+					String sql = "SELECT * FROM birraio WHERE username = '" + userField.getText() + "' AND password = '" + pwdCorretta +"'";
 					try (ResultSet rs = stmt.executeQuery(sql);){
 						if(rs.next()) {
 							Birraio brewerBirraio = new Birraio(rs.getInt("id_birraio"), rs.getString("nome"), rs.getString("cognome"), rs.getString("username"), rs.getString("password"));
@@ -124,6 +123,10 @@ public class Login {
 		JLabel lblWelcome = new JLabel("BREW DAY 2 All GRAIN - Welcome!");
 		lblWelcome.setBounds(79, 43, 261, 14);
 		frame.getContentPane().add(lblWelcome);
+		
+		passwordField = new JPasswordField();
+		passwordField.setBounds(183, 99, 100, 26);
+		frame.getContentPane().add(passwordField);
 		
 		
 	}
