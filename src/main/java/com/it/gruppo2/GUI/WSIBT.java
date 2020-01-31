@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JList;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JScrollPane;
 
 public class WSIBT {
 
@@ -185,10 +186,13 @@ public class WSIBT {
 			e1.printStackTrace();
 		}
 		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(154, 92, 200, 200);
+		frame.getContentPane().add(scrollPane);
+		
 		//crazione oggetti birra basati sul database...
 		final JList<String> listWSITB = new JList<String>(nomiRicetta);
-		listWSITB.setBounds(154, 92, 200, 200);
-		frame.getContentPane().add(listWSITB);
+		scrollPane.setViewportView(listWSITB);
 
 		
 		JButton btnPrepara = new JButton("Prepara");
@@ -244,9 +248,12 @@ public class WSIBT {
 		menuBar.add(mntmIndietro);
 		frame.getContentPane().setLayout(null);
 		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(413, 92, 200, 200);
+		frame.getContentPane().add(scrollPane_1);
+		
 		JList<String> listQtaTot = new JList<String>(quantitaTotRicetta);
-		listQtaTot.setBounds(413, 92, 200, 200);
-		frame.getContentPane().add(listQtaTot);
+		scrollPane_1.setViewportView(listQtaTot);
 		
 		
 		

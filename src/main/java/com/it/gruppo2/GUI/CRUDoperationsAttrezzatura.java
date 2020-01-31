@@ -24,6 +24,7 @@ import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JScrollPane;
 
 public class CRUDoperationsAttrezzatura {
 
@@ -145,8 +146,12 @@ public class CRUDoperationsAttrezzatura {
 			lblNomeAttrezzatura.setBounds(77, 64, 182, 20);
 			frame.getContentPane().add(lblNomeAttrezzatura);
 			
+			JLabel lblQuantita = new JLabel("Quantità Attrezzatura");
+			lblQuantita.setBounds(77, 196, 182, 20);
+			frame.getContentPane().add(lblQuantita);
+			
 			txtNome = new JTextField();
-			txtNome.setBounds(305, 61, 267, 26);
+			txtNome.setBounds(305, 64, 267, 26);
 			frame.getContentPane().add(txtNome);
 			txtNome.setColumns(10);
 			
@@ -253,13 +258,19 @@ public class CRUDoperationsAttrezzatura {
 							o++;
 					}
 					
-					final JList<String> listAttrName = new JList<String>(nomeList);
-					listAttrName.setBounds(64, 32, 200, 200);
-					frame.getContentPane().add(listAttrName);
+					JScrollPane scrollPane = new JScrollPane();
+					scrollPane.setBounds(64, 32, 200, 200);
+					frame.getContentPane().add(scrollPane);
+					
+					final JList<String> listAttrName_1 = new JList<String>(nomeList);
+					scrollPane.setViewportView(listAttrName_1);
+					
+					JScrollPane scrollPane_1 = new JScrollPane();
+					scrollPane_1.setBounds(300, 32, 200, 200);
+					frame.getContentPane().add(scrollPane_1);
 					
 					final JList<String> listAttrQta = new JList<String>(capacitaList);
-					listAttrQta.setBounds(300, 32, 200, 200);
-					frame.getContentPane().add(listAttrQta);
+					scrollPane_1.setViewportView(listAttrQta);
 				} catch (Exception e) {
 					// TODO: handle exception
 					e.printStackTrace();

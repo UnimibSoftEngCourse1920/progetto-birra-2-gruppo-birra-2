@@ -22,6 +22,7 @@ import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JScrollPane;
 
 public class CRUDoperationsIngrediente {
 
@@ -229,13 +230,19 @@ public class CRUDoperationsIngrediente {
 							qtaList.addElement(rs.getDouble("qta"));
 					}
 					
+					JScrollPane scrollPane = new JScrollPane();
+					scrollPane.setBounds(49, 16, 200, 311);
+					frame.getContentPane().add(scrollPane);
+					
 					JList<String> listIngrName = new JList<String>(nomeList);
-					listIngrName.setBounds(49, 16, 200, 311);
-					frame.getContentPane().add(listIngrName);
+					scrollPane.setViewportView(listIngrName);
+					
+					JScrollPane scrollPane_1 = new JScrollPane();
+					scrollPane_1.setBounds(295, 16, 200, 311);
+					frame.getContentPane().add(scrollPane_1);
 					
 					JList<Double> listCapienza = new JList<Double>(qtaList);
-					listCapienza.setBounds(295, 16, 200, 311);
-					frame.getContentPane().add(listCapienza);
+					scrollPane_1.setViewportView(listCapienza);
 					rs.close();
 				} catch (Exception e) {
 					// TODO: handle exception

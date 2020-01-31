@@ -21,6 +21,7 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.SwingConstants;
+import javax.swing.JScrollPane;
 
 public class BrewDayMenu {
 
@@ -163,23 +164,29 @@ public class BrewDayMenu {
 		
 		rs.close();
 		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(64, 32, 200, 200);
+		frame.getContentPane().add(scrollPane);
+		
 		
 		final JList<String> listd = new JList<String>(nomeList);
-		listd.setBounds(64, 32, 200, 200);
-		frame.getContentPane().add(listd);
+		scrollPane.setViewportView(listd);
+		
+				listd.addListSelectionListener(new ListSelectionListener() {
+		          public void valueChanged(ListSelectionEvent e) {
+		              int index = listd.getSelectedIndex();
+		              RicetteBirra ricetteBirra = new RicetteBirra(connection, birraList.get(index), brewerBirraio);
+		              ricetteBirra.invokeGUI(connection, birraList.get(index), brewerBirraio);
+		              frame.dispose();
+		          }
+				});
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(291, 32, 200, 200);
+		frame.getContentPane().add(scrollPane_1);
 		
 		final JList<String> listr = new JList<String>(noteList);
-		listr.setBounds(265, 32, 200, 200);
-		frame.getContentPane().add(listr);
-
-		listd.addListSelectionListener(new ListSelectionListener() {
-          public void valueChanged(ListSelectionEvent e) {
-              int index = listd.getSelectedIndex();
-              RicetteBirra ricetteBirra = new RicetteBirra(connection, birraList.get(index), brewerBirraio);
-              ricetteBirra.invokeGUI(connection, birraList.get(index), brewerBirraio);
-              frame.dispose();
-          }
-		});
+		scrollPane_1.setViewportView(listr);
 		
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);

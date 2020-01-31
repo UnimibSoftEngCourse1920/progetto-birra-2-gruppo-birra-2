@@ -22,6 +22,7 @@ import javax.swing.JOptionPane;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JButton;
+import javax.swing.JScrollPane;
 
 public class RicetteBirra {
 
@@ -58,7 +59,7 @@ public class RicetteBirra {
 	 */
 	private void initialize(final Connection connection,final Birra birra, final Birraio brewerBirraio) {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 899, 453);
+		frame.setBounds(100, 100, 985, 453);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		try (Statement stmt2 = connection.createStatement();Statement stmt4 = connection.createStatement()){
@@ -100,28 +101,40 @@ public class RicetteBirra {
     		}
     		rs1.close();
     		frame.getContentPane().setLayout(null);
+    		
+    		JScrollPane scrollPane_1 = new JScrollPane();
+    		scrollPane_1.setBounds(15, 100, 200, 200);
+    		frame.getContentPane().add(scrollPane_1);
     		final JList<String> listRicette = new JList<String>(ricetteListModel);
+    		scrollPane_1.setViewportView(listRicette);
     		listRicette.setValueIsAdjusting(true);
-    		listRicette.setBounds(15, 100, 200, 200);
-    		frame.getContentPane().add(listRicette);
+    		
+    		JScrollPane scrollPane = new JScrollPane();
+    		scrollPane.setBounds(243, 100, 200, 200);
+    		frame.getContentPane().add(scrollPane);
     		
     		JList<String> listIngrediente = new JList<String>(ingredienteListModel);
+    		scrollPane.setViewportView(listIngrediente);
     		listIngrediente.setValueIsAdjusting(true);
-    		listIngrediente.setBounds(230, 100, 200, 200);
-    		frame.getContentPane().add(listIngrediente);
+			
+			JScrollPane scrollPane_2 = new JScrollPane();
+			scrollPane_2.setBounds(486, 100, 200, 200);
+			frame.getContentPane().add(scrollPane_2);
     		
 			JList<String> listWeight = new JList<String>(weightListModel);
+			scrollPane_2.setViewportView(listWeight);
     		listWeight.setValueIsAdjusting(true);
-    		listWeight.setBounds(445, 100, 200, 200);
-    		frame.getContentPane().add(listWeight);
+    		
+    		JScrollPane scrollPane_3 = new JScrollPane();
+    		scrollPane_3.setBounds(728, 100, 200, 200);
+    		frame.getContentPane().add(scrollPane_3);
     		
     		JList<String> listPercentuali = new JList<String>(percentualeListModel);
+    		scrollPane_3.setViewportView(listPercentuali);
     		listPercentuali.setValueIsAdjusting(true);
-    		listPercentuali.setBounds(660, 100, 200, 200);
-    		frame.getContentPane().add(listPercentuali);
     		
     		JMenuBar menuBar = new JMenuBar();
-    		menuBar.setBounds(0, 0, 877, 31);
+    		menuBar.setBounds(0, 0, 963, 31);
     		frame.getContentPane().add(menuBar);
     		
     		JMenuItem plsBack = new JMenuItem("Indietro");
@@ -230,8 +243,10 @@ public class RicetteBirra {
     				}
     			}
     		});
-    		btnProduciRicetta.setBounds(660, 333, 200, 29);
+    		btnProduciRicetta.setBounds(731, 335, 200, 29);
     		frame.getContentPane().add(btnProduciRicetta);
+    		
+  
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}

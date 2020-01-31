@@ -22,6 +22,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JScrollPane;
 
 public class ListaDellaSpesa {
 
@@ -85,9 +86,12 @@ public class ListaDellaSpesa {
 			e1.printStackTrace();
 		};
 		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(50, 74, 200, 200);
+		frame.getContentPane().add(scrollPane);
+		
 		final JList<String> listd = new JList<String>(ingrList1);
-		listd.setBounds(50, 74, 200, 200);
-		frame.getContentPane().add(listd);
+		scrollPane.setViewportView(listd);
 		
 		JButton btnTogli = new JButton("Togli dalla lista");
 		btnTogli.addActionListener(new ActionListener() {

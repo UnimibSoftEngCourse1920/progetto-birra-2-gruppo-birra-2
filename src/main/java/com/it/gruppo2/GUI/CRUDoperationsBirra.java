@@ -21,6 +21,7 @@ import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JScrollPane;
 
 public class CRUDoperationsBirra {
 
@@ -139,9 +140,12 @@ public class CRUDoperationsBirra {
 			lblNote.setBounds(61, 154, 69, 20);
 			frame.getContentPane().add(lblNote);
 			
+			JScrollPane scrollPane = new JScrollPane();
+			scrollPane.setBounds(181, 154, 289, 341);
+			frame.getContentPane().add(scrollPane);
+			
 			final JTextArea txtNote = new JTextArea();
-			txtNote.setBounds(181, 154, 289, 341);
-			frame.getContentPane().add(txtNote);
+			scrollPane.setViewportView(txtNote);
 			
 			JButton btnCreaBirra = new JButton("Crea Birra");
 			btnCreaBirra.addMouseListener(new MouseAdapter() {
